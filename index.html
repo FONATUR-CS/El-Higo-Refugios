@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geoportal - Refugios Temporales | El Higo, Veracruz</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+  /* Primitive Color Tokens */
+  --color-white: rgba(255, 255, 255, 1);
+  --color-black: rgba(0, 0, 0, 1);
+  --color-cream-50: rgba(252, 252, 249, 1);
+  --color-cream-100: rgba(255, 255, 253, 1);
+  --color-gray-200: rgba(245, 245, 245, 1);
+  --color-gray-300: rgba(167, 169, 169, 1);
+  --color-gray-400: rgba(119, 124, 124, 1);
+  --color-slate-500: rgba(98, 108, 113, 1);
+  --color-brown-600: rgba(94, 82, 64, 1);
+  --color-charcoal-700: rgba(31, 33, 33, 1);
+  --color-charcoal-800: rgba(38, 40, 40, 1);
+  --color-slate-900: rgba(19, 52, 59, 1);
+  --color-teal-300: rgba(50, 184, 198, 1);
+  --color-teal-400: rgba(45, 166, 178, 1);
+  --color-teal-500: rgba(33, 128, 141, 1);
+  --color-teal-600: rgba(29, 116, 128, 1);
+  --color-teal-700: rgba(26, 104, 115, 1);
+  --color-teal-800: rgba(41, 150, 161, 1);
+  --color-red-400: rgba(255, 84, 89, 1);
+  --color-red-500: rgba(192, 21, 47, 1);
+  --color-orange-400: rgba(230, 129, 97, 1);
+  --color-orange-500: rgba(168, 75, 47, 1);
+
+  /* RGB versions for opacity control */
+  --color-brown-600-rgb: 94, 82, 64;
+  --color-teal-500-rgb: 33, 128, 141;
+  --color-slate-900-rgb: 19, 52, 59;
+  --color-slate-500-rgb: 98, 108, 113;
+  --color-red-500-rgb: 192, 21, 47;
+  --color-red-400-rgb: 255, 84, 89;
+  --color-orange-500-rgb: 168, 75, 47;
+  --color-orange-400-rgb: 230, 129, 97;
+
+  /* Background color tokens (Light Mode) */
+  --color-bg-1: rgba(59, 130, 246, 0.08); /* Light blue */
+  --color-bg-2: rgba(245, 158, 11, 0.08); /* Light yellow */
+  --color-bg-3: rgba(34, 197, 94, 0.08); /* Light green */
+  --color-bg-4: rgba(239, 68, 68, 0.08); /* Light red */
+  --color-bg-5: rgba(147, 51, 234, 0.08); /* Light purple */
+  --color-bg-6: rgba(249, 115, 22, 0.08); /* Light orange */
+  --color-bg-7: rgba(236, 72, 153, 0.08); /* Light pink */
+  --color-bg-8: rgba(6, 182, 212, 0.08); /* Light cyan */
+
+  /* Semantic Color Tokens (Light Mode) */
+  --color-background: var(--color-cream-50);
+  --color-surface: var(--color-cream-100);
+  --color-text: var(--color-slate-900);
+  --color-text-secondary: var(--color-slate-500);
+  --color-primary: var(--color-teal-500);
+  --color-primary-hover: var(--color-teal-600);
+  --color-primary-active: var(--color-teal-700);
+  --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
+  --color-secondary-active: rgba(var(--color-brown-600-rgb), 0.25);
+  --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+  --color-btn-primary-text: var(--color-cream-50);
+  --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-card-border-inner: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-error: var(--color-red-500);
+  --color-success: var(--color-teal-500);
+  --color-warning: var(--color-orange-500);
+  --color-info: var(--color-slate-500);
+  --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
+  --color-select-caret: rgba(var(--color-slate-900-rgb), 0.8);
+
+  /* Common style patterns */
+  --focus-ring: 0 0 0 3px var(--color-focus-ring);
+  --focus-outline: 2px solid var(--color-primary);
+  --status-bg-opacity: 0.15;
+  --status-border-opacity: 0.25;
+  --select-caret-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23134252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  --select-caret-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+
+  /* Typography */
+  --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, monospace;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 24px;
+  --font-size-4xl: 30px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 550;
+  --font-weight-bold: 600;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --letter-spacing-tight: -0.01em;
+
+  /* Spacing */
+  --space-0: 0;
+  --space-1: 1px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-base: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04),
+    0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04),
+    0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+
+  /* Animation */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layout */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+}
+
+/* Dark mode colors */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* RGB versions for opacity control (Dark Mode) */
+    --color-gray-400-rgb: 119, 124, 124;
+    --color-teal-300-rgb: 50, 184, 198;
+    --color-gray-300-rgb: 167, 169, 169;
+    --color-gray-200-rgb: 245, 245, 245;
+
+    /* Background color tokens (Dark Mode) */
+    --color-bg-1: rgba(29, 78, 216, 0.15); /* Dark blue */
+    --color-bg-2: rgba(180, 83, 9, 0.15); /* Dark yellow */
+    --color-bg-3: rgba(21, 128, 61, 0.15); /* Dark green */
+    --color-bg-4: rgba(185, 28, 28, 0.15); /* Dark red */
+    --color-bg-5: rgba(107, 33, 168, 0.15); /* Dark purple */
+    --color-bg-6: rgba(194, 65, 12, 0.15); /* Dark orange */
+    --color-bg-7: rgba(190, 24, 93, 0.15); /* Dark pink */
+    --color-bg-8: rgba(8, 145, 178, 0.15); /* Dark cyan */
+
+    /* Semantic Color Tokens (Dark Mode) */
+    --color-background: var(--color-charcoal-700);
+    --color-surface: var(--color-charcoal-800);
+    --color-text: var(--color-gray-200);
+    --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+    --color-primary: var(--color-teal-300);
+    --color-primary-hover: var(--color-teal-400);
+    --color-primary-active: var(--color-teal-800);
+    --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+    --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
+    --color-secondary-active: rgba(var(--color-gray-400-rgb), 0.3);
+    --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+    --color-error: var(--color-red-400);
+    --color-success: var(--color-teal-300);
+    --color-warning: var(--color-orange-400);
+    --color-info: var(--color-gray-300);
+    --color-focus-ring: rgba(var(--color-teal-300-rgb), 0.4);
+    --color-btn-primary-text: var(--color-slate-900);
+    --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
+    --color-card-border-inner: rgba(var(--color-gray-400-rgb), 0.15);
+    --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    --button-border-secondary: rgba(var(--color-gray-400-rgb), 0.2);
+    --color-border-secondary: rgba(var(--color-gray-400-rgb), 0.2);
+    --color-select-caret: rgba(var(--color-gray-200-rgb), 0.8);
+  }
+}
+
+/* Base styles */
+html {
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+}
+h2 {
+  font-size: var(--font-size-3xl);
+}
+h3 {
+  font-size: var(--font-size-2xl);
+}
+h4 {
+  font-size: var(--font-size-xl);
+}
+h5 {
+  font-size: var(--font-size-lg);
+}
+h6 {
+  font-size: var(--font-size-md);
+}
+
+        /* Custom styles for the geoportal */
+        .geoportal-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 400px;
+            background-color: var(--color-surface);
+            border-right: 1px solid var(--color-card-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: var(--space-20);
+            border-bottom: 1px solid var(--color-card-border);
+            background-color: var(--color-bg-1);
+        }
+
+        .sidebar-title {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-primary);
+            margin-bottom: var(--space-8);
+        }
+
+        .sidebar-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-16);
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            transition: border-color var(--duration-fast) var(--ease-standard);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: var(--focus-ring);
+        }
+
+        .shelter-stats {
+            padding: var(--space-16) var(--space-20);
+            background-color: var(--color-bg-3);
+            border-bottom: 1px solid var(--color-card-border);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+        }
+
+        .stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .stat-value {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-success);
+        }
+
+        .shelter-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-16);
+        }
+
+        .shelter-item {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-16);
+            margin-bottom: var(--space-12);
+            cursor: pointer;
+            transition: all var(--duration-fast) var(--ease-standard);
+        }
+
+        .shelter-item:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--color-primary);
+        }
+
+        .shelter-item.active {
+            border-color: var(--color-primary);
+            background-color: var(--color-bg-1);
+        }
+
+        .shelter-name {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text);
+            margin-bottom: var(--space-8);
+        }
+
+        .shelter-address {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-8);
+        }
+
+        .shelter-type {
+            display: inline-block;
+            background-color: var(--color-success);
+            color: var(--color-btn-primary-text);
+            padding: var(--space-4) var(--space-8);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .shelter-coords {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            margin-top: var(--space-8);
+            font-family: var(--font-family-mono);
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: var(--space-16);
+            right: var(--space-16);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-8);
+        }
+
+        .control-btn {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-12);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            color: var(--color-text);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--duration-fast) var(--ease-standard);
+        }
+
+        .control-btn:hover {
+            background-color: var(--color-primary);
+            color: var(--color-btn-primary-text);
+            box-shadow: var(--shadow-md);
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--color-surface);
+            padding: var(--space-20);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 2000;
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--color-border);
+            border-top: 3px solid var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--space-16) auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            padding: var(--space-16) var(--space-20);
+            border-top: 1px solid var(--color-card-border);
+            background-color: var(--color-bg-8);
+            text-align: center;
+        }
+
+        .footer-text {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .geoportal-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 300px;
+                border-right: none;
+                border-bottom: 1px solid var(--color-card-border);
+            }
+
+            .sidebar-header {
+                padding: var(--space-16);
+            }
+
+            .shelter-list {
+                padding: var(--space-12);
+            }
+
+            .map-container {
+                height: calc(100vh - 300px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                height: 250px;
+            }
+
+            .map-container {
+                height: calc(100vh - 250px);
+            }
+
+            .map-controls {
+                top: var(--space-8);
+                right: var(--space-8);
+            }
+        }
+
+        /* Leaflet popup customization */
+        .leaflet-popup-content-wrapper {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-base);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .custom-popup {
+            min-width: 250px;
+        }
+
+        .popup-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text);
+            margin-bottom: var(--space-8);
+        }
+
+        .popup-address {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-8);
+        }
+
+        .popup-type {
+            display: inline-block;
+            background-color: var(--color-success);
+            color: var(--color-btn-primary-text);
+            padding: var(--space-4) var(--space-8);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .popup-coords {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+            margin-top: var(--space-8);
+            font-family: var(--font-family-mono);
+        }
+
+        /* Custom marker styles */
+        .shelter-marker {
+            background-color: var(--color-success);
+            border: 2px solid var(--color-white);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        @font-face {
+            font-family: 'FKGroteskNeue';
+            src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2')
+              format('woff2');
+        }
+    </style>
+</head>
+<body>
+    <div class="geoportal-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-title">Refugios Temporales</h1>
+                <p class="sidebar-subtitle">El Higo, Veracruz, México</p>
+                
+                <div class="search-container">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Buscar refugios...">
+                </div>
+            </div>
+
+            <div class="shelter-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total de Refugios:</span>
+                    <span class="stat-value" id="totalShelters">6</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Mostrados:</span>
+                    <span class="stat-value" id="visibleShelters">6</span>
+                </div>
+            </div>
+
+            <div class="shelter-list" id="shelterList">
+                <!-- Shelter items will be populated by JavaScript -->
+            </div>
+
+            <div class="footer">
+                <p class="footer-text">Sistema de Gestión de Emergencias<br>Protección Civil</p>
+            </div>
+        </div>
+
+        <!-- Map Container -->
+        <div class="map-container">
+            <div id="map"></div>
+            
+            <div class="map-controls">
+                <button class="control-btn" id="centerMapBtn" title="Centrar mapa en todos los refugios">
+                    🎯 Centrar Vista
+                </button>
+                <button class="control-btn" id="toggleLayerBtn" title="Cambiar vista de mapa">
+                    🗺️ Cambiar Vista
+                </button>
+            </div>
+
+            <div class="loading" id="loadingIndicator">
+                <div class="loading-spinner"></div>
+                <p>Cargando refugios...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // Shelter data
+        const sheltersData = [
+            {
+                nombre: "Auditorio Municipal",
+                descripcion: "Presa, Centro, C.P. 92400 El Higo, Ver.",
+                latitud: 21.7698839,
+                longitud: -98.4526875,
+                tipo: "Refugio Temporal"
+            },
+            {
+                nombre: "Iglesia Adventista Del Séptimo Día La Carolina",
+                descripcion: "92407 El Higo, Ver.",
+                latitud: 21.747499,
+                longitud: -98.4505949,
+                tipo: "Refugio Temporal"
+            },
+            {
+                nombre: "Primaria Benito Juarez Garcia",
+                descripcion: "Gersain Ugarte 16, 20 de Noviembre, 92400 El Higo, Ver.",
+                latitud: 21.7738143,
+                longitud: -98.449667199999979,
+                tipo: "Refugio Temporal"
+            },
+            {
+                nombre: "J. de N. Rosa Isabel Meraz Ostos",
+                descripcion: "C. Francisco I Madero, 20 de Noviembre, 92400 El Higo, Ver.",
+                latitud: 21.7738875,
+                longitud: -98.4488395,
+                tipo: "Refugio Temporal"
+            },
+            {
+                nombre: "Escuela Primaria Vicente Guerrero",
+                descripcion: "92401, Benito Juárez 13, Centro, El Higo, Ver.",
+                latitud: 21.7667521,
+                longitud: -98.4489532,
+                tipo: "Refugio Temporal"
+            },
+            {
+                nombre: "Escuela Secundaria General Ignacio Zaragoza 30DES0039W",
+                descripcion: "Prol Ejército Nacional SN, Zona Centro, 92400 El Higo, Ver.",
+                latitud: 21.7684937,
+                longitud: -98.4485818,
+                tipo: "Refugio Temporal"
+            }
+        ];
+
+        // Location configuration
+        const locationConfig = {
+            municipio: "El Higo",
+            estado: "Veracruz",
+            pais: "México",
+            centro_lat: 21.760,
+            centro_lng: -98.450,
+            zoom_inicial: 14
+        };
+
+        // Global variables
+        let map;
+        let markersLayer;
+        let currentLayer = 'osm';
+        let filteredShelters = [...sheltersData];
+
+        // Map layers
+        const mapLayers = {
+            osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }),
+            satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community',
+                maxZoom: 19
+            })
+        };
+
+        // Initialize the application
+        function initializeApp() {
+            initializeMap();
+            setupEventListeners();
+            populateShelterList();
+            addMarkersToMap();
+            hideLoading();
+        }
+
+        // Initialize the map
+        function initializeMap() {
+            map = L.map('map').setView([locationConfig.centro_lat, locationConfig.centro_lng], locationConfig.zoom_inicial);
+            
+            // Add initial layer
+            mapLayers.osm.addTo(map);
+            
+            // Create markers layer group
+            markersLayer = L.layerGroup().addTo(map);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            
+            // Map controls
+            document.getElementById('centerMapBtn').addEventListener('click', centerMapOnShelters);
+            document.getElementById('toggleLayerBtn').addEventListener('click', toggleMapLayer);
+        }
+
+        // Handle search functionality
+        function handleSearch(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            
+            filteredShelters = sheltersData.filter(shelter => 
+                shelter.nombre.toLowerCase().includes(searchTerm) ||
+                shelter.descripcion.toLowerCase().includes(searchTerm) ||
+                shelter.tipo.toLowerCase().includes(searchTerm)
+            );
+            
+            updateShelterDisplay();
+        }
+
+        // Update shelter display (list and map)
+        function updateShelterDisplay() {
+            populateShelterList();
+            updateMapMarkers();
+            updateStats();
+        }
+
+        // Populate shelter list in sidebar
+        function populateShelterList() {
+            const shelterList = document.getElementById('shelterList');
+            shelterList.innerHTML = '';
+            
+            filteredShelters.forEach((shelter, index) => {
+                const shelterItem = createShelterItem(shelter, index);
+                shelterList.appendChild(shelterItem);
+            });
+        }
+
+        // Create shelter item element
+        function createShelterItem(shelter, index) {
+            const item = document.createElement('div');
+            item.className = 'shelter-item';
+            item.setAttribute('data-index', index);
+            
+            item.innerHTML = `
+                <div class="shelter-name">${shelter.nombre}</div>
+                <div class="shelter-address">${shelter.descripcion}</div>
+                <div class="shelter-type">${shelter.tipo}</div>
+                <div class="shelter-coords">Lat: ${shelter.latitud.toFixed(6)}, Lng: ${shelter.longitud.toFixed(6)}</div>
+            `;
+            
+            // Add click event to focus on shelter
+            item.addEventListener('click', () => focusOnShelter(shelter));
+            
+            return item;
+        }
+
+        // Add markers to map
+        function addMarkersToMap() {
+            sheltersData.forEach(shelter => {
+                addShelterMarker(shelter);
+            });
+        }
+
+        // Update map markers based on filtered shelters
+        function updateMapMarkers() {
+            markersLayer.clearLayers();
+            
+            filteredShelters.forEach(shelter => {
+                addShelterMarker(shelter);
+            });
+        }
+
+        // Add individual shelter marker
+        function addShelterMarker(shelter) {
+            // Create custom icon
+            const shelterIcon = L.divIcon({
+                className: 'shelter-marker',
+                html: '<div style="background-color: #20b2aa; border: 2px solid white; border-radius: 50%; width: 20px; height: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+            
+            // Create marker
+            const marker = L.marker([shelter.latitud, shelter.longitud], {
+                icon: shelterIcon
+            });
+            
+            // Create popup content
+            const popupContent = `
+                <div class="custom-popup">
+                    <div class="popup-title">${shelter.nombre}</div>
+                    <div class="popup-address">${shelter.descripcion}</div>
+                    <div class="popup-type">${shelter.tipo}</div>
+                    <div class="popup-coords">Lat: ${shelter.latitud.toFixed(6)}, Lng: ${shelter.longitud.toFixed(6)}</div>
+                </div>
+            `;
+            
+            marker.bindPopup(popupContent);
+            marker.addTo(markersLayer);
+            
+            // Add click event to highlight corresponding list item
+            marker.on('click', () => highlightShelterItem(shelter));
+        }
+
+        // Focus on specific shelter
+        function focusOnShelter(shelter) {
+            map.setView([shelter.latitud, shelter.longitud], 16);
+            highlightShelterItem(shelter);
+            
+            // Find and open the marker popup
+            markersLayer.eachLayer(layer => {
+                if (layer.getLatLng().lat === shelter.latitud && layer.getLatLng().lng === shelter.longitud) {
+                    layer.openPopup();
+                }
+            });
+        }
+
+        // Highlight shelter item in list
+        function highlightShelterItem(shelter) {
+            // Remove active class from all items
+            document.querySelectorAll('.shelter-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to current item
+            const index = filteredShelters.findIndex(s => s.nombre === shelter.nombre);
+            if (index !== -1) {
+                const shelterItem = document.querySelector(`[data-index="${index}"]`);
+                if (shelterItem) {
+                    shelterItem.classList.add('active');
+                    shelterItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+        }
+
+        // Center map on all shelters
+        function centerMapOnShelters() {
+            if (filteredShelters.length === 0) return;
+            
+            const group = new L.featureGroup();
+            
+            filteredShelters.forEach(shelter => {
+                group.addLayer(L.marker([shelter.latitud, shelter.longitud]));
+            });
+            
+            map.fitBounds(group.getBounds().pad(0.1));
+        }
+
+        // Toggle map layer
+        function toggleMapLayer() {
+            if (currentLayer === 'osm') {
+                map.removeLayer(mapLayers.osm);
+                map.addLayer(mapLayers.satellite);
+                currentLayer = 'satellite';
+                document.getElementById('toggleLayerBtn').innerHTML = '🗺️ Vista Calles';
+            } else {
+                map.removeLayer(mapLayers.satellite);
+                map.addLayer(mapLayers.osm);
+                currentLayer = 'osm';
+                document.getElementById('toggleLayerBtn').innerHTML = '🛰️ Vista Satélite';
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalShelters').textContent = sheltersData.length;
+            document.getElementById('visibleShelters').textContent = filteredShelters.length;
+        }
+
+        // Hide loading indicator
+        function hideLoading() {
+            setTimeout(() => {
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }, 1000);
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
