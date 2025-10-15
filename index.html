@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Refugios Temporales - El Higo, Veracruz</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -132,7 +130,7 @@
             box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
         }
 
-        /* Panel lateral izquierdo simplificado */
+        /* Panel lateral izquierdo */
         .sidebar-left {
             position: fixed;
             left: 0;
@@ -143,18 +141,13 @@
             z-index: 900;
             overflow-y: auto;
             box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-left.collapsed {
-            transform: translateX(-100%);
         }
 
         .sidebar-content {
             padding: 1.5rem;
         }
 
-        /* Estadística única - Total de refugios */
+        /* Estadística única */
         .stats-simple {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             padding: 1.5rem;
@@ -184,7 +177,7 @@
             font-family: 'Noto Sans', sans-serif;
         }
 
-        /* Lista de refugios simplificada */
+        /* Lista de refugios */
         .refugios-list {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
@@ -233,7 +226,7 @@
             font-family: 'Noto Sans', sans-serif;
         }
 
-        /* Panel derecho mejorado */
+        /* Panel derecho */
         .sidebar-right {
             position: fixed;
             right: 20px;
@@ -245,11 +238,6 @@
             box-shadow: var(--shadow);
             z-index: 900;
             overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-right.collapsed {
-            transform: translateX(calc(100% + 20px));
         }
 
         .nearest-shelter {
@@ -342,35 +330,6 @@
             transform: scale(1.1);
         }
 
-        /* Toggle buttons */
-        .toggle-btn {
-            position: fixed;
-            z-index: 950;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: white;
-            padding: 0.75rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-            font-family: 'Noto Sans', sans-serif;
-        }
-
-        .toggle-left {
-            left: 10px;
-            top: 100px;
-        }
-
-        .toggle-right {
-            right: 10px;
-            top: 100px;
-        }
-
-        .sidebar-left.collapsed ~ .toggle-left {
-            left: 10px;
-        }
-
         /* Scrollbar personalizado */
         ::-webkit-scrollbar {
             width: 8px;
@@ -413,65 +372,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .sidebar-right {
-                width: 280px;
-                right: 10px;
-            }
-
-            .map-controls {
-                right: 310px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                padding: 0.75rem;
-                height: auto;
-                min-height: 120px;
-            }
-
-            .header-left {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-
-            .logo-fonatur {
-                height: 35px;
-            }
-
-            .header-title h1 {
-                font-size: 1.2rem;
-            }
-
-            .search-container {
-                max-width: 100%;
-            }
-
-            .sidebar-left {
-                width: 100%;
-                top: 120px;
-            }
-
-            .sidebar-right {
-                width: calc(100% - 20px);
-                right: 10px;
-                left: 10px;
-                top: auto;
-                bottom: 10px;
-                max-height: 300px;
-            }
-
-            .map-controls {
-                right: 10px;
-                top: auto;
-                bottom: 330px;
-            }
-        }
-
-        /* Popup personalizado de Leaflet */
+        /* Popup personalizado sin animaciones molestas */
         .leaflet-popup-content-wrapper {
             background: var(--card-bg);
             color: white;
@@ -538,10 +439,9 @@
 
         .popup-directions:hover {
             background: var(--secondary-color);
-            transform: translateY(-2px);
         }
 
-        /* Marcadores personalizados con etiquetas integradas */
+        /* Marcadores personalizados */
         .custom-marker-container {
             display: flex;
             flex-direction: column;
@@ -582,17 +482,233 @@
             font-size: 14px;
         }
 
-        /* Ocultar clusters de Leaflet para evitar amontonamiento */
-        .leaflet-marker-icon.marker-cluster {
-            background: rgba(26, 95, 95, 0.9) !important;
-            border: 2px solid white;
+        /* RESPONSIVE MEJORADO PARA MÓVIL */
+        @media (max-width: 768px) {
+            /* Header responsive */
+            .header {
+                height: auto;
+                min-height: 60px;
+                padding: 0.75rem;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .header-left {
+                width: 100%;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .logo-container {
+                width: 100%;
+                justify-content: center;
+                gap: 0.75rem;
+            }
+
+            .logo-fonatur {
+                height: 35px;
+            }
+
+            .header-title {
+                text-align: center;
+            }
+
+            .header-title h1 {
+                font-size: 1.1rem;
+            }
+
+            .header-title .subtitle {
+                font-size: 0.75rem;
+            }
+
+            .search-container {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .search-input {
+                font-size: 0.9rem;
+                padding: 0.65rem 0.85rem;
+            }
+
+            /* Panel izquierdo en móvil */
+            .sidebar-left {
+                width: 100%;
+                top: auto;
+                bottom: 0;
+                height: 40vh;
+                border-radius: 20px 20px 0 0;
+            }
+
+            .sidebar-content {
+                padding: 1rem;
+            }
+
+            .stats-simple {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .stats-simple .stat-icon {
+                font-size: 2rem;
+            }
+
+            .stats-simple .stat-value {
+                font-size: 2rem;
+            }
+
+            .stats-simple .stat-label {
+                font-size: 0.95rem;
+            }
+
+            .refugios-list {
+                max-height: calc(40vh - 180px);
+                padding: 0.75rem;
+            }
+
+            .refugios-list-title {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .refugio-item {
+                padding: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .refugio-name {
+                font-size: 0.9rem;
+            }
+
+            .refugio-tipo {
+                font-size: 0.8rem;
+            }
+
+            /* Panel derecho en móvil - arriba a la derecha */
+            .sidebar-right {
+                right: 10px;
+                left: auto;
+                top: 140px;
+                width: 200px;
+                max-height: 180px;
+            }
+
+            .nearest-shelter {
+                padding: 0.75rem;
+            }
+
+            .nearest-title {
+                font-size: 0.85rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .nearest-name {
+                font-size: 0.85rem;
+            }
+
+            .nearest-distance {
+                font-size: 1rem;
+                gap: 0.25rem;
+            }
+
+            .directions-btn {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+                margin-top: 0.5rem;
+            }
+
+            /* Controles del mapa en móvil */
+            .map-controls {
+                right: 10px;
+                top: 340px;
+                z-index: 850;
+            }
+
+            .map-control-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+
+            /* Ajustar mapa para no tapar contenido */
+            #map {
+                top: 140px;
+                bottom: 40vh;
+            }
+
+            /* Marcadores más pequeños en móvil */
+            .marker-label {
+                font-size: 9px;
+                padding: 4px 6px;
+            }
+
+            .marker-icon {
+                width: 22px;
+                height: 22px;
+                border: 2px solid white;
+            }
+
+            .marker-icon-emoji {
+                font-size: 11px;
+            }
+
+            /* Popup más pequeño en móvil */
+            .popup-content {
+                padding: 0.5rem;
+            }
+
+            .popup-title {
+                font-size: 0.95rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .popup-row {
+                font-size: 0.8rem;
+            }
+
+            .popup-directions {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
         }
 
-        .leaflet-marker-icon.marker-cluster div {
-            background: rgba(45, 139, 139, 0.9) !important;
-            color: white;
-            font-family: 'Noto Sans', sans-serif;
-            font-weight: 700;
+        /* Responsive para tablets */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .sidebar-left {
+                width: 300px;
+            }
+
+            .sidebar-right {
+                width: 260px;
+                right: 15px;
+            }
+
+            .map-controls {
+                right: 290px;
+            }
+
+            .header-title h1 {
+                font-size: 1.3rem;
+            }
+
+            .search-container {
+                max-width: 300px;
+            }
+        }
+
+        /* Responsive para pantallas grandes */
+        @media (min-width: 1400px) {
+            .sidebar-left {
+                width: 420px;
+            }
+
+            .sidebar-right {
+                width: 360px;
+            }
+
+            .map-controls {
+                right: 400px;
+            }
         }
     </style>
 </head>
@@ -616,9 +732,6 @@
             </div>
         </div>
     </header>
-
-    <button class="toggle-btn toggle-left" id="toggleLeft" title="Mostrar/Ocultar Panel">☰</button>
-    <button class="toggle-btn toggle-right" id="toggleRight" title="Mostrar/Ocultar Info">ℹ️</button>
 
     <aside class="sidebar-left" id="sidebarLeft">
         <div class="sidebar-content">
@@ -663,7 +776,6 @@
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script>
         const refugiosData = [{'numero': '1', 'nombre': 'Escuela Benito Juárez', 'tipo': 'Escuela', 'lat': 21.77431326, 'lng': -98.4486667, 'direccion': 'Zona Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/rtuz4XMLyuHW3pYs8'}, {'numero': '2', 'nombre': 'Sección 79 CONASUPO', 'tipo': 'Salón', 'lat': 21.7747128, 'lng': -98.44911549, 'direccion': 'Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/vpfxnqkuizzvxxmv6'}, {'numero': '3', 'nombre': 'Capilla San José', 'tipo': 'Capilla', 'lat': 21.77483527, 'lng': -98.44938256, 'direccion': 'Col. Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/4ZTkTJGtjncHy6PV8'}, {'numero': '4', 'nombre': 'Biblioteca de la 20', 'tipo': 'Escuela', 'lat': 21.77323564, 'lng': -98.45023293, 'direccion': 'Centro Histórico, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/wECJZSzwE6jUUirv9'}, {'numero': '5', 'nombre': 'Primaria Vicente Guerrero', 'tipo': 'Escuela', 'lat': 21.77100048, 'lng': -98.45499366, 'direccion': 'Sector Norte, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/pdGh2Q9mgPCV9Y7s5'}, {'numero': '6', 'nombre': 'CNC', 'tipo': 'Centro Comunitario', 'lat': 21.76969429, 'lng': -98.4544362, 'direccion': 'Col. Hidalgo, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/7av6hxDhcr733R2b9'}, {'numero': '7', 'nombre': 'Iglesia Nuestra Señora del Rosario', 'tipo': 'Iglesia', 'lat': 21.76850124, 'lng': -98.45386366, 'direccion': 'Sector Sur, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/emumtg2rr8RdcazYA'}, {'numero': '8', 'nombre': 'Sección 79', 'tipo': 'Salón', 'lat': 21.76831327, 'lng': -98.4544527, 'direccion': 'Col. Hidalgo, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/CmDzwMjYa1Gp2h1r5'}, {'numero': '9', 'nombre': 'Nocturna', 'tipo': 'Escuela', 'lat': 21.76911099, 'lng': -98.45346147, 'direccion': 'Centro Histórico, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/qPFRyBSm8atFfWRi7'}, {'numero': '10', 'nombre': 'Iglesia del 7mo día', 'tipo': 'Iglesia', 'lat': 21.76812305, 'lng': -98.45248927, 'direccion': 'Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/PfxAZEtcU17pyS5h7'}, {'numero': '11', 'nombre': 'Auditorio Municipal', 'tipo': 'Auditorio', 'lat': 21.77024989, 'lng': -98.45285924, 'direccion': 'Col. Benito Juárez, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/P38fVEruvHGu5CVo9'}];
@@ -699,7 +811,6 @@
                 position: 'bottomright'
             }).addTo(map);
 
-            // Desactivar clustering para evitar amontonamiento
             markersLayer = L.layerGroup();
             map.addLayer(markersLayer);
 
@@ -786,12 +897,7 @@
                 duration: 1.5
             });
 
-            anime({
-                targets: '.stats-simple',
-                scale: [0.95, 1],
-                duration: 500,
-                easing: 'easeOutElastic(1, .8)'
-            });
+            // Eliminar animación que causa el temblor
         }
 
         function getUserLocation() {
@@ -875,13 +981,6 @@
                     `${(minDistance * 1000).toFixed(0)} m` : 
                     `${minDistance.toFixed(2)} km`;
                 document.getElementById('directionsBtn').href = nearest.mapsUrl;
-
-                anime({
-                    targets: '.nearest-shelter',
-                    scale: [0.98, 1],
-                    duration: 400,
-                    easing: 'easeOutQuad'
-                });
             }
         }
 
@@ -941,28 +1040,6 @@
 
             loadRefugios();
             updateNearestShelter();
-        });
-
-        document.getElementById('toggleLeft').addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebarLeft');
-            sidebar.classList.toggle('collapsed');
-
-            anime({
-                targets: sidebar,
-                duration: 300,
-                easing: 'easeOutQuad'
-            });
-        });
-
-        document.getElementById('toggleRight').addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebarRight');
-            sidebar.classList.toggle('collapsed');
-
-            anime({
-                targets: sidebar,
-                duration: 300,
-                easing: 'easeOutQuad'
-            });
         });
 
         document.getElementById('centerBtn').addEventListener('click', function() {
