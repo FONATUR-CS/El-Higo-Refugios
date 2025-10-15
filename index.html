@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -28,7 +31,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             overflow: hidden;
             background: var(--dark-bg);
             color: var(--text-primary);
@@ -91,12 +94,14 @@
             font-weight: 700;
             margin: 0;
             color: white;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .header-title .subtitle {
             font-size: 0.875rem;
             color: rgba(255, 255, 255, 0.8);
             margin-top: 2px;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .search-container {
@@ -112,6 +117,7 @@
             background: rgba(255, 255, 255, 0.15);
             color: white;
             font-size: 0.95rem;
+            font-family: 'Noto Sans', sans-serif;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
         }
@@ -168,12 +174,14 @@
             font-weight: 700;
             color: white;
             margin-bottom: 0.25rem;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .stats-simple .stat-label {
             font-size: 1.1rem;
             color: rgba(255, 255, 255, 0.9);
             font-weight: 600;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         /* Lista de refugios simplificada */
@@ -192,6 +200,7 @@
             margin-bottom: 1rem;
             color: var(--accent-color);
             text-align: center;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .refugio-item {
@@ -215,11 +224,13 @@
             margin-bottom: 0.5rem;
             color: white;
             font-size: 0.95rem;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .refugio-tipo {
             font-size: 0.85rem;
             color: var(--text-secondary);
+            font-family: 'Noto Sans', sans-serif;
         }
 
         /* Panel derecho mejorado */
@@ -251,6 +262,7 @@
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 1rem;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .nearest-info {
@@ -262,6 +274,7 @@
         .nearest-name {
             font-size: 1.2rem;
             font-weight: 700;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .nearest-distance {
@@ -271,6 +284,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: #fbbf24;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .directions-btn {
@@ -288,6 +302,7 @@
             text-decoration: none;
             display: block;
             text-align: center;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .directions-btn:hover {
@@ -339,6 +354,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: var(--shadow);
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .toggle-left {
@@ -469,6 +485,7 @@
 
         .popup-content {
             padding: 0.5rem;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .popup-title {
@@ -476,6 +493,7 @@
             font-size: 1.1rem;
             margin-bottom: 0.75rem;
             color: var(--accent-color);
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .popup-info {
@@ -494,10 +512,12 @@
         .popup-label {
             color: var(--text-secondary);
             margin-right: 0.5rem;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .popup-value {
             font-weight: 600;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .popup-directions {
@@ -513,6 +533,7 @@
             text-decoration: none;
             display: block;
             text-align: center;
+            font-family: 'Noto Sans', sans-serif;
         }
 
         .popup-directions:hover {
@@ -520,34 +541,71 @@
             transform: translateY(-2px);
         }
 
-        /* Etiquetas de nombres siempre visibles */
-        .leaflet-marker-label {
-            position: absolute;
+        /* Marcadores personalizados con etiquetas integradas */
+        .custom-marker-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .marker-label {
             background: rgba(26, 35, 50, 0.95);
             color: white;
-            padding: 4px 8px;
+            padding: 6px 10px;
             border-radius: 6px;
-            font-size: 0.75rem;
+            font-size: 11px;
             font-weight: 600;
             white-space: nowrap;
-            pointer-events: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(77, 184, 184, 0.5);
-            transform: translate(-50%, -100%);
-            margin-top: -8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(77, 184, 184, 0.6);
+            font-family: 'Noto Sans', sans-serif;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .marker-icon {
+            background: #10b981;
+            width: 28px;
+            height: 28px;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            border: 3px solid white;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .marker-icon-emoji {
+            transform: rotate(45deg);
+            font-size: 14px;
+        }
+
+        /* Ocultar clusters de Leaflet para evitar amontonamiento */
+        .leaflet-marker-icon.marker-cluster {
+            background: rgba(26, 95, 95, 0.9) !important;
+            border: 2px solid white;
+        }
+
+        .leaflet-marker-icon.marker-cluster div {
+            background: rgba(45, 139, 139, 0.9) !important;
+            color: white;
+            font-family: 'Noto Sans', sans-serif;
+            font-weight: 700;
         }
     </style>
 </head>
 <body>
     <div id="loading" class="loading">
         <div class="spinner"></div>
-        <p style="margin-top: 1rem; color: var(--text-secondary);">Cargando refugios...</p>
+        <p style="margin-top: 1rem; color: var(--text-secondary); font-family: 'Noto Sans', sans-serif;">Cargando refugios...</p>
     </div>
 
     <header class="header">
         <div class="header-left">
             <div class="logo-container">
-                <img src="Logo_FONATUR.png" alt="FONATUR" class="logo-fonatur">
+                <img src="Logo_FONATUR.jpg" alt="FONATUR" class="logo-fonatur">
                 <div class="header-title">
                     <h1>Refugios Temporales</h1>
                     <span class="subtitle">El Higo, Veracruz, México</span>
@@ -608,10 +666,8 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script>
-        // Datos de refugios con coordenadas reales del CSV
         const refugiosData = [{'numero': '1', 'nombre': 'Escuela Benito Juárez', 'tipo': 'Escuela', 'lat': 21.77431326, 'lng': -98.4486667, 'direccion': 'Zona Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/rtuz4XMLyuHW3pYs8'}, {'numero': '2', 'nombre': 'Sección 79 CONASUPO', 'tipo': 'Salón', 'lat': 21.7747128, 'lng': -98.44911549, 'direccion': 'Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/vpfxnqkuizzvxxmv6'}, {'numero': '3', 'nombre': 'Capilla San José', 'tipo': 'Capilla', 'lat': 21.77483527, 'lng': -98.44938256, 'direccion': 'Col. Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/4ZTkTJGtjncHy6PV8'}, {'numero': '4', 'nombre': 'Biblioteca de la 20', 'tipo': 'Escuela', 'lat': 21.77323564, 'lng': -98.45023293, 'direccion': 'Centro Histórico, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/wECJZSzwE6jUUirv9'}, {'numero': '5', 'nombre': 'Primaria Vicente Guerrero', 'tipo': 'Escuela', 'lat': 21.77100048, 'lng': -98.45499366, 'direccion': 'Sector Norte, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/pdGh2Q9mgPCV9Y7s5'}, {'numero': '6', 'nombre': 'CNC', 'tipo': 'Centro Comunitario', 'lat': 21.76969429, 'lng': -98.4544362, 'direccion': 'Col. Hidalgo, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/7av6hxDhcr733R2b9'}, {'numero': '7', 'nombre': 'Iglesia Nuestra Señora del Rosario', 'tipo': 'Iglesia', 'lat': 21.76850124, 'lng': -98.45386366, 'direccion': 'Sector Sur, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/emumtg2rr8RdcazYA'}, {'numero': '8', 'nombre': 'Sección 79', 'tipo': 'Salón', 'lat': 21.76831327, 'lng': -98.4544527, 'direccion': 'Col. Hidalgo, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/CmDzwMjYa1Gp2h1r5'}, {'numero': '9', 'nombre': 'Nocturna', 'tipo': 'Escuela', 'lat': 21.76911099, 'lng': -98.45346147, 'direccion': 'Centro Histórico, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/qPFRyBSm8atFfWRi7'}, {'numero': '10', 'nombre': 'Iglesia del 7mo día', 'tipo': 'Iglesia', 'lat': 21.76812305, 'lng': -98.45248927, 'direccion': 'Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/PfxAZEtcU17pyS5h7'}, {'numero': '11', 'nombre': 'Auditorio Municipal', 'tipo': 'Auditorio', 'lat': 21.77024989, 'lng': -98.45285924, 'direccion': 'Col. Benito Juárez, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/P38fVEruvHGu5CVo9'}];
 
-        // Variables globales
         let map;
         let markersLayer;
         let userMarker;
@@ -619,7 +675,6 @@
         let currentLayer = 'satellite';
         let filteredRefugios = [...refugiosData];
 
-        // Capas de mapas
         const layers = {
             satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Esri'
@@ -632,7 +687,6 @@
             })
         };
 
-        // Inicializar mapa centrado en El Higo con las coordenadas reales
         function initMap() {
             map = L.map('map', {
                 center: [21.7715, -98.4515],
@@ -645,13 +699,8 @@
                 position: 'bottomright'
             }).addTo(map);
 
-            markersLayer = L.markerClusterGroup({
-                spiderfyOnMaxZoom: true,
-                showCoverageOnHover: false,
-                zoomToBoundsOnClick: true,
-                maxClusterRadius: 50
-            });
-
+            // Desactivar clustering para evitar amontonamiento
+            markersLayer = L.layerGroup();
             map.addLayer(markersLayer);
 
             anime({
@@ -665,38 +714,25 @@
             getUserLocation();
         }
 
-        // Crear icono personalizado simple
-        function createCustomIcon() {
-            const iconHtml = `
-                <div style="
-                    background: #10b981;
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 50% 50% 50% 0;
-                    transform: rotate(-45deg);
-                    border: 3px solid white;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                ">
-                    <span style="
-                        transform: rotate(45deg);
-                        font-size: 16px;
-                    ">📍</span>
+        function createCustomMarker(refugio) {
+            const markerHtml = `
+                <div class="custom-marker-container">
+                    <div class="marker-label">${refugio.nombre}</div>
+                    <div class="marker-icon">
+                        <span class="marker-icon-emoji">📍</span>
+                    </div>
                 </div>
             `;
 
             return L.divIcon({
-                html: iconHtml,
-                iconSize: [32, 32],
-                iconAnchor: [16, 32],
-                popupAnchor: [0, -32],
-                className: ''
+                html: markerHtml,
+                className: '',
+                iconSize: [150, 60],
+                iconAnchor: [75, 60],
+                popupAnchor: [0, -60]
             });
         }
 
-        // Crear popup simplificado
         function createPopupContent(refugio) {
             return `
                 <div class="popup-content">
@@ -718,13 +754,13 @@
             `;
         }
 
-        // Cargar refugios en el mapa
         function loadRefugios() {
             markersLayer.clearLayers();
 
             filteredRefugios.forEach(refugio => {
                 const marker = L.marker([refugio.lat, refugio.lng], {
-                    icon: createCustomIcon()
+                    icon: createCustomMarker(refugio),
+                    zIndexOffset: 1000
                 });
 
                 marker.bindPopup(createPopupContent(refugio), {
@@ -732,26 +768,11 @@
                     className: 'custom-popup'
                 });
 
-                // Crear etiqueta permanente con el nombre
-                const label = L.divIcon({
-                    html: `<div class="leaflet-marker-label">${refugio.nombre}</div>`,
-                    className: '',
-                    iconSize: null
-                });
-
-                const labelMarker = L.marker([refugio.lat, refugio.lng], {
-                    icon: label,
-                    interactive: false,
-                    zIndexOffset: -1000
-                });
-
-                // Animación al hacer clic
                 marker.on('click', function() {
                     flyToRefugio(refugio);
                 });
 
                 markersLayer.addLayer(marker);
-                markersLayer.addLayer(labelMarker);
             });
 
             updateStats();
@@ -759,7 +780,6 @@
             document.getElementById('loading').style.display = 'none';
         }
 
-        // Volar hacia refugio con animación
         function flyToRefugio(refugio) {
             map.flyTo([refugio.lat, refugio.lng], 18, {
                 animate: true,
@@ -774,7 +794,6 @@
             });
         }
 
-        // Obtener ubicación del usuario
         function getUserLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -814,7 +833,6 @@
             }
         }
 
-        // Calcular distancia entre dos puntos
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -827,7 +845,6 @@
             return R * c;
         }
 
-        // Actualizar refugio más cercano
         function updateNearestShelter() {
             if (!userLocation) {
                 document.getElementById('nearestName').textContent = 'Obteniendo ubicación...';
@@ -868,12 +885,10 @@
             }
         }
 
-        // Actualizar estadística de total de refugios
         function updateStats() {
             animateValue('statTotal', 0, filteredRefugios.length, 800);
         }
 
-        // Animar valores numéricos
         function animateValue(id, start, end, duration) {
             const element = document.getElementById(id);
             const range = end - start;
@@ -890,7 +905,6 @@
             }, 16);
         }
 
-        // Actualizar lista de refugios
         function updateRefugiosList() {
             const lista = document.getElementById('refugiosList');
 
@@ -918,7 +932,6 @@
             });
         }
 
-        // Aplicar búsqueda
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
 
@@ -930,7 +943,6 @@
             updateNearestShelter();
         });
 
-        // Toggle sidebar izquierdo
         document.getElementById('toggleLeft').addEventListener('click', function() {
             const sidebar = document.getElementById('sidebarLeft');
             sidebar.classList.toggle('collapsed');
@@ -942,7 +954,6 @@
             });
         });
 
-        // Toggle sidebar derecho
         document.getElementById('toggleRight').addEventListener('click', function() {
             const sidebar = document.getElementById('sidebarRight');
             sidebar.classList.toggle('collapsed');
@@ -954,7 +965,6 @@
             });
         });
 
-        // Centrar vista
         document.getElementById('centerBtn').addEventListener('click', function() {
             if (userLocation) {
                 map.flyTo([userLocation.lat, userLocation.lng], 15, {
@@ -976,7 +986,6 @@
             });
         });
 
-        // Cambiar capa del mapa
         document.getElementById('layerBtn').addEventListener('click', function() {
             const layers_array = ['satellite', 'streets', 'dark'];
             const currentIndex = layers_array.indexOf(currentLayer);
@@ -994,7 +1003,6 @@
             });
         });
 
-        // Inicializar aplicación
         document.addEventListener('DOMContentLoaded', function() {
             initMap();
 
