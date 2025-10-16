@@ -287,13 +287,16 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             color: white;
+            width: 120px;            /* ← CAMBIO: ANCHO FIJO IGUAL A BOTONES */
             min-width: 120px;
-            max-width: 160px;
+            max-width: 120px;        /* ← CAMBIO: SIN EXPANSIÓN EXTRA */
             transition: all 0.3s ease;
             box-shadow: var(--shadow);
             cursor: default;
             margin-top: 0.75rem;
-            padding: 0.75rem;
+            padding: 0.75rem 1rem;   /* ← CAMBIO: PADDING IGUAL A BOTONES */
+            text-align: center;      /* ← CAMBIO: CENTRA TODO EL CONTENIDO */
+            overflow: hidden;        /* ← NUEVO: Evita desbordamiento */
         }
 
         .nearest-panel:hover {
@@ -304,9 +307,12 @@
         .nearest-header {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
+            justify-content: center; /* ← CAMBIO: CENTRA HORIZONTALMENTE */
+            gap: 0.25rem;            /* ← CAMBIO: REDUCE ESPACIO */
+            margin-bottom: 0.25rem;  /* ← CAMBIO: MENOS MARGEN */
+            flex-direction: column;  /* ← NUEVO: ÍCONO Y TEXTO EN VERTICAL */
         }
+
 
         .nearest-icon {
             font-size: 1.2rem;
@@ -321,41 +327,54 @@
         }
 
         .nearest-name {
-            font-size: 0.9rem;
+            font-size: 0.8rem;               /* ← CAMBIO: FUENTE MÁS PEQUEÑA */
             font-weight: 700;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;           /* ← CAMBIO: MENOS MARGEN */
             font-family: 'Noto Sans', sans-serif;
-            line-height: 1.2;
+            line-height: 1.1;                /* ← CAMBIO: LÍNEA MÁS COMPACTA */
+            text-align: center;              /* ← CAMBIO: CENTRA EL TEXTO */
             word-break: break-word;
+            overflow: hidden;                /* ← NUEVO: Evita desbordamiento */
+            text-overflow: ellipsis;         /* ← NUEVO: Puntos suspensivos */
+            display: -webkit-box;            /* ← NUEVO: Control de líneas */
+            -webkit-line-clamp: 2;           /* ← NUEVO: Máximo 2 líneas */
+            -webkit-box-orient: vertical;    /* ← NUEVO: Orientación vertical */
+            max-height: 1.6em;               /* ← NUEVO: Altura máxima */
         }
+
 
         .nearest-distance {
             display: flex;
             align-items: center;
-            gap: 0.25rem;
-            font-size: 0.85rem;
+            justify-content: center;     /* ← CAMBIO: CENTRA HORIZONTALMENTE */
+            gap: 0.2rem;                 /* ← CAMBIO: MENOS ESPACIO */
+            font-size: 0.8rem;           /* ← CAMBIO: FUENTE MÁS PEQUEÑA */
             font-weight: 600;
             color: #fbbf24;
             font-family: 'Noto Sans', sans-serif;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;       /* ← CAMBIO: MENOS MARGEN */
         }
+
 
         .nearest-directions {
             width: 100%;
-            padding: 0.5rem;
+            padding: 0.4rem 0.5rem;      /* ← CAMBIO: MÁS COMPACTO */
             background: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;          /* ← CAMBIO: BORDES MÁS PEQUEÑOS */
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.8rem;
+            transition: background-color 0.3s ease; /* ← CAMBIO: SOLO COLOR */
+            font-size: 0.7rem;           /* ← CAMBIO: FUENTE MÁS PEQUEÑA */
             text-decoration: none;
             display: block;
             text-align: center;
             font-family: 'Noto Sans', sans-serif;
+            line-height: 1.2;            /* ← NUEVO: LÍNEA COMPACTA */
+            white-space: nowrap;         /* ← NUEVO: SIN SALTO DE LÍNEA */
         }
+
 
         .nearest-directions:hover {
             background: var(--secondary-color);
@@ -752,11 +771,14 @@
             }
 
             .nearest-panel {
+                width: 90px;         /* ← IGUAL QUE BOTONES EN MÓVIL */
                 min-width: 90px;
-                max-width: 110px;
-                padding: 0.5rem 0.75rem;
+                max-width: 90px;
+                padding: 0.4rem 0.5rem; /* ← MÁS COMPACTO */
                 margin-top: 0.5rem;
+                text-align: center;
             }
+
 
             .nearest-header {
                 margin-bottom: 0.25rem;
