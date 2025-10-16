@@ -26,7 +26,6 @@
             --text-secondary: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            --marker-bg: #11312c;
         }
 
         body {
@@ -375,7 +374,7 @@
             background: var(--secondary-color);
         }
 
-        /* Loading */
+        /* Loading spinner */
         .loading {
             position: fixed;
             top: 50%;
@@ -398,7 +397,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Popup */
+        /* Popup personalizado */
         .leaflet-popup-content-wrapper {
             background: var(--card-bg);
             color: white;
@@ -467,13 +466,12 @@
             background: var(--secondary-color);
         }
 
-        /* Marcadores con etiquetas anti-sobreposición */
+        /* Marcadores con etiquetas optimizadas */
         .custom-marker-container {
-            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            z-index: 1000;
+            position: relative;
         }
 
         .marker-label {
@@ -497,7 +495,7 @@
         }
 
         .marker-icon {
-            background: var(--marker-bg);
+            background: var(--primary-color);
             width: 24px;
             height: 24px;
             border-radius: 50% 50% 50% 0;
@@ -515,40 +513,7 @@
             font-size: 12px;
         }
 
-        /* Anti-sobreposición de etiquetas */
-        .leaflet-marker-icon .marker-label {
-            position: absolute;
-            top: -35px;
-            left: 50%;
-            transform: translateX(-50%);
-            pointer-events: none;
-        }
-
-        /* Ajuste dinámico para evitar superposiciones */
-        .leaflet-marker-icon {
-            position: relative;
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-color);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--secondary-color);
-        }
-
-        /* MÓVIL - MENÚ HAMBURGUESA */
+        /* MÓVIL - MENÚS DESPLEGABLES */
         .hamburger-menu {
             display: none;
         }
@@ -796,7 +761,7 @@
                 top: 140px;
             }
 
-            /* Marcadores más pequeños */
+            /* Marcadores más pequeños en móvil */
             .marker-label {
                 font-size: 8px;
                 padding: 3px 5px;
@@ -972,7 +937,6 @@
         let userLocation = null;
         let currentLayer = 'satellite';
         let filteredRefugios = [...refugiosData];
-        let labelPositions = {}; // Para control de posiciones
 
         const layers = {
             satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -1007,90 +971,6 @@
 
             loadRefugios();
             getUserLocation();
-        }
-
-        function getMarkerPosition(marker) {
-            if (marker._icon) {
-                const rect = marker._icon.getBoundingClientRect();
-                const mapRect = map.getContainer().getBoundingClientRect();
-                return {
-                    x: rect.left - mapRect.left,
-                    y: rect.top - mapRect.top,
-                    width: rect.width,
-                    height: rect.height
-                };
-            }
-            return null;
-        }
-
-        function avoidLabelCollisions(markers, threshold = 40) {
-            const positions = [];
-            markers.each(function(marker) {
-                if (marker._icon) {
-                    const rect = marker._icon.getBoundingClientRect();
-                    positions.push({
-                        marker: marker,
-                        rect: rect,
-                        center: {
-                            x: rect.left + rect.width / 2,
-                            y: rect.top + rect.height / 2
-                        }
-                    });
-                }
-            });
-
-            // Ordenar por distancia al centro para priorizar
-            const centerX = map.getSize().x / 2;
-            const centerY = map.getSize().y / 2;
-
-            positions.sort(function(a, b) {
-                const distA = Math.sqrt(Math.pow(a.center.x - centerX, 2) + Math.pow(a.center.y - centerY, 2));
-                const distB = Math.sqrt(Math.pow(b.center.x - centerX, 2) + Math.pow(b.center.y - centerY, 2));
-                return distA - distB;
-            });
-
-            positions.forEach(function(pos, index) {
-                let conflict = false;
-                let attempts = 0;
-                let finalOffset = 0;
-
-                // Intentar desplazamientos
-                const directions = [
-                    { x: 0, y: -50 }, // arriba
-                    { x: 50, y: -30 }, // arriba derecha
-                    { x: -50, y: -30 }, // arriba izquierda
-                    { x: 30, y: 20 }, // abajo izquierda
-                    { x: -30, y: 20 } // abajo derecha
-                ];
-
-                for (let dir of directions) {
-                    let testRect = {
-                        left: pos.rect.left + dir.x,
-                        top: pos.rect.top + dir.y,
-                        width: pos.rect.width,
-                        height: pos.rect.height
-                    };
-
-                    let collides = false;
-                    for (let other of positions) {
-                        if (other === pos) continue;
-                        if (other.rect.left <= testRect.right && 
-                            other.rect.right >= testRect.left &&
-                            other.rect.top <= testRect.bottom && 
-                            other.rect.bottom >= testRect.top) {
-                            collides = true;
-                            break;
-                        }
-                    }
-
-                    if (!collides) {
-                        pos.marker._icon.style.position = 'relative';
-                        pos.marker._icon.style.left = dir.x + 'px';
-                        pos.marker._icon.style.top = dir.y + 'px';
-                        break;
-                    }
-                }
-            });
         }
 
         function createCustomMarker(refugio) {
@@ -1138,8 +1018,7 @@
 
             filteredRefugios.forEach(refugio => {
                 const marker = L.marker([refugio.lat, refugio.lng], {
-                    icon: createCustomMarker(refugio),
-                    zIndexOffset: 1000
+                    icon: createCustomMarker(refugio)
                 });
 
                 marker.bindPopup(createPopupContent(refugio), {
@@ -1156,7 +1035,6 @@
 
             updateStats();
             updateRefugiosList();
-            avoidLabelCollisions(markersLayer);
             document.getElementById('loading').style.display = 'none';
         }
 
@@ -1190,13 +1068,6 @@
                             icon: userIcon
                         }).addTo(map);
 
-                        anime({
-                            targets: userMarker._icon,
-                            scale: [0, 1],
-                            duration: 600,
-                            easing: 'easeOutElastic(1, .8)'
-                        });
-
                         updateNearestShelter();
                     },
                     error => {
@@ -1204,6 +1075,8 @@
                         updateNearestShelter();
                     }
                 );
+            } else {
+                updateNearestShelter();
             }
         }
 
@@ -1220,10 +1093,14 @@
         }
 
         function updateNearestShelter() {
+            const nearestNamePanel = document.getElementById('nearestNamePanel');
+            const nearestDistancePanel = document.getElementById('nearestDistancePanel');
+            const nearestDirectionsPanel = document.getElementById('nearestDirectionsPanel');
+
             if (!userLocation || filteredRefugios.length === 0) {
-                document.getElementById('nearestNamePanel').textContent = 'Sin ubicación';
-                document.getElementById('nearestDistancePanel').textContent = '---';
-                document.getElementById('nearestDirectionsPanel').style.display = 'none';
+                if (nearestNamePanel) nearestNamePanel.textContent = 'Sin ubicación';
+                if (nearestDistancePanel) nearestDistancePanel.textContent = '---';
+                if (nearestDirectionsPanel) nearestDirectionsPanel.style.display = 'none';
                 return;
             }
 
@@ -1245,22 +1122,39 @@
             });
 
             if (nearest) {
-                document.getElementById('nearestNamePanel').textContent = nearest.nombre.length > 18 ? nearest.nombre.substring(0, 18) + '...' : nearest.nombre;
-                document.getElementById('nearestDistancePanel').textContent = 
-                    minDistance < 1 ? 
-                    `${(minDistance * 1000).toFixed(0)}m` : 
-                    `${minDistance.toFixed(1)}km`;
-                document.getElementById('nearestDirectionsPanel').href = nearest.mapsUrl;
-                document.getElementById('nearestDirectionsPanel').style.display = 'block';
+                if (nearestNamePanel) {
+                    const truncatedName = nearest.nombre.length > 18 ? nearest.nombre.substring(0, 18) + '...' : nearest.nombre;
+                    nearestNamePanel.textContent = truncatedName;
+                }
+                if (nearestDistancePanel) {
+                    const distanceText = minDistance < 1 ? 
+                        `${(minDistance * 1000).toFixed(0)}m` : 
+                        `${minDistance.toFixed(1)}km`;
+                    nearestDistancePanel.textContent = distanceText;
+                }
+                if (nearestDirectionsPanel) {
+                    nearestDirectionsPanel.href = nearest.mapsUrl;
+                    nearestDirectionsPanel.style.display = 'block';
+                }
             }
         }
 
         function updateStats() {
-            animateValue('statTotal', 0, filteredRefugios.length, 800);
+            const statTotal = document.getElementById('statTotal');
+            const menuStatTotal = document.getElementById('menuStatTotal');
+
+            if (statTotal) {
+                animateValue('statTotal', 0, filteredRefugios.length, 800);
+            }
+            if (menuStatTotal) {
+                animateValue('menuStatTotal', 0, filteredRefugios.length, 800);
+            }
         }
 
         function animateValue(id, start, end, duration) {
             const element = document.getElementById(id);
+            if (!element) return;
+
             const range = end - start;
             const increment = range / (duration / 16);
             let current = start;
@@ -1277,32 +1171,57 @@
 
         function updateRefugiosList() {
             const lista = document.getElementById('refugiosList');
+            const menuLista = document.getElementById('menuRefugiosList');
 
-            if (filteredRefugios.length === 0) {
-                lista.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No se encontraron refugios</div>';
-                return;
+            if (lista) {
+                if (filteredRefugios.length === 0) {
+                    lista.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No se encontraron refugios</div>';
+                } else {
+                    lista.innerHTML = filteredRefugios.map(refugio => {
+                        return `
+                            <div class="refugio-item" onclick="flyToRefugio(${JSON.stringify(refugio).replace(/"/g, '\"')})">
+                                <div class="refugio-name">${refugio.nombre}</div>
+                                <div class="refugio-tipo">${refugio.tipo}</div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    anime({
+                        targets: '.refugio-item',
+                        translateX: [-50, 0],
+                        opacity: [0, 1],
+                        duration: 600,
+                        delay: anime.stagger(50),
+                        easing: 'easeOutQuad'
+                    });
+                }
             }
 
-            lista.innerHTML = filteredRefugios.map(refugio => {
-                return `
-                    <div class="refugio-item" onclick="flyToRefugio(${JSON.stringify(refugio).replace(/"/g, '&quot;')})">
-                        <div class="refugio-name">${refugio.nombre}</div>
-                        <div class="refugio-tipo">${refugio.tipo}</div>
-                    </div>
-                `;
-            }).join('');
+            if (menuLista) {
+                if (filteredRefugios.length === 0) {
+                    menuLista.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No se encontraron refugios</div>';
+                } else {
+                    menuLista.innerHTML = filteredRefugios.map(refugio => {
+                        return `
+                            <div class="menu-refugio-item" onclick="flyToRefugio(${JSON.stringify(refugio).replace(/"/g, '\"')});closeRefugiosMenu()">
+                                <div class="menu-refugio-name">${refugio.nombre}</div>
+                                <div class="menu-refugio-tipo">${refugio.tipo}</div>
+                            </div>
+                        `;
+                    }).join('');
 
-            anime({
-                targets: '.refugio-item',
-                translateX: [-50, 0],
-                opacity: [0, 1],
-                duration: 600,
-                delay: anime.stagger(50),
-                easing: 'easeOutQuad'
-            });
+                    anime({
+                        targets: '.menu-refugio-item',
+                        translateX: [-50, 0],
+                        opacity: [0, 1],
+                        duration: 600,
+                        delay: anime.stagger(50),
+                        easing: 'easeOutQuad'
+                    });
+                }
+            }
         }
 
-        // Función para centrar vista en los refugios
         function centerToRefugios() {
             if (filteredRefugios.length === 0) return;
 
@@ -1315,28 +1234,39 @@
                 animate: true,
                 duration: 1.5
             });
-
-            // Reordenar etiquetas después del zoom
-            setTimeout(avoidLabelCollisions, 500);
         }
 
         // Menú hamburguesa (móvil)
-        document.getElementById('hamburgerBtn').addEventListener('click', function() {
+        function closeRefugiosMenu() {
             const menu = document.getElementById('refugiosMenu');
-            menu.classList.add('active');
-        });
+            if (menu) menu.classList.remove('active');
+        }
 
-        document.getElementById('closeRefugiosMenu').addEventListener('click', function() {
-            document.getElementById('refugiosMenu').classList.remove('active');
-        });
+        function initMobileMenu() {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const closeRefugiosMenu = document.getElementById('closeRefugiosMenu');
+            const refugiosMenu = document.getElementById('refugiosMenu');
 
-        // Cerrar menú al tocar el mapa
-        map.addEventListener('click', function() {
-            const menu = document.getElementById('refugiosMenu');
-            if (menu.classList.contains('active')) {
-                menu.classList.remove('active');
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener('click', function() {
+                    if (refugiosMenu) refugiosMenu.classList.add('active');
+                });
             }
-        });
+
+            if (closeRefugiosMenu) {
+                closeRefugiosMenu.addEventListener('click', function() {
+                    if (refugiosMenu) refugiosMenu.classList.remove('active');
+                });
+            }
+
+            if (map) {
+                map.addEventListener('click', function() {
+                    if (refugiosMenu && refugiosMenu.classList.contains('active')) {
+                        refugiosMenu.classList.remove('active');
+                    }
+                });
+            }
+        }
 
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
@@ -1350,38 +1280,64 @@
         });
 
         // Botones de control del mapa
-        document.getElementById('centerBtn').addEventListener('click', function() {
-            centerToRefugios();
+        document.addEventListener('DOMContentLoaded', function() {
+            const centerBtn = document.getElementById('centerBtn');
+            const layerBtn = document.getElementById('layerBtn');
 
-            anime({
-                targets: this,
-                rotate: '1turn',
-                duration: 600,
-                easing: 'easeOutQuad'
-            });
-        });
+            function centerToRefugios() {
+                if (filteredRefugios.length === 0) return;
 
-        document.getElementById('layerBtn').addEventListener('click', function() {
-            if (currentLayer === 'satellite') {
-                map.removeLayer(layers.satellite);
-                map.addLayer(layers.streets);
-                currentLayer = 'streets';
-            } else {
-                map.removeLayer(layers.streets);
-                map.addLayer(layers.satellite);
-                currentLayer = 'satellite';
+                const bounds = L.latLngBounds(
+                    filteredRefugios.map(r => [r.lat, r.lng])
+                );
+
+                map.flyToBounds(bounds, {
+                    padding: [50, 50],
+                    animate: true,
+                    duration: 1.5
+                });
             }
 
-            anime({
-                targets: this,
-                scale: [0.8, 1],
-                duration: 300,
-                easing: 'easeOutElastic(1, .8)'
-            });
+            if (centerBtn) {
+                centerBtn.addEventListener('click', function() {
+                    centerToRefugios();
+
+                    const btn = this;
+                    anime({
+                        targets: btn,
+                        rotate: '1turn',
+                        duration: 600,
+                        easing: 'easeOutQuad'
+                    });
+                });
+            }
+
+            if (layerBtn) {
+                layerBtn.addEventListener('click', function() {
+                    if (currentLayer === 'satellite') {
+                        map.removeLayer(layers.satellite);
+                        map.addLayer(layers.streets);
+                        currentLayer = 'streets';
+                    } else {
+                        map.removeLayer(layers.streets);
+                        map.addLayer(layers.satellite);
+                        currentLayer = 'satellite';
+                    }
+
+                    const btn = this;
+                    anime({
+                        targets: btn,
+                        scale: [0.8, 1],
+                        duration: 300,
+                        easing: 'easeOutElastic(1, .8)'
+                    });
+                });
+            }
         });
 
         document.addEventListener('DOMContentLoaded', function() {
             initMap();
+            initMobileMenu();
 
             anime({
                 targets: '.sidebar-left',
