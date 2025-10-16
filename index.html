@@ -1096,7 +1096,7 @@
             // Solo zoom del mapa - SIN animaciones extra
             map.flyTo([refugio.lat, refugio.lng], 18, {
                 animate: true,
-                duration: 1.5
+                duration: 0.8
             });
         }
 
@@ -1285,20 +1285,38 @@
         }
 
         function flyToRefugioFromList(refugio) {
-            // Solo zoom del mapa - SIN animaciones extra
+            // 1. Hacer zoom al refugio (como ya funciona)
             flyToRefugio(refugio);
-
-            // Destacar el elemento de la lista
+            
+            // 2. ESPERAR a que el mapa se centre y luego abrir popup
+            setTimeout(function() {
+                // Buscar el marcador correspondiente en el mapa
+                markersLayer.eachLayer(function(marker) {
+                    // Comparar coordenadas para encontrar el marcador correcto
+                    if (marker.getLatLng().lat === refugio.lat && marker.getLatLng().lng === refugio.lng) {
+                        // Abrir el popup del marcador
+                        marker.openPopup();
+                        
+                        // Cerrar popups anteriores si existen
+                        map.closePopup();
+                        marker.openPopup();
+                        
+                        // Opcional: Centrar el popup en la vista si está fuera de pantalla
+                        map.panBy([0, -50], { duration: 0.5 });
+                        
+                        // Detener búsqueda una vez encontrado
+                        return false;
+                    }
+                });
+            }, 800); // ← 800ms de espera para que termine el zoom (ajusta si necesitas)
+            
+            // 3. Mantener efectos visuales de la lista (highlight, scroll)
             clearActiveItems();
-
-            // Buscar y destacar el elemento correspondiente
             const allItems = document.querySelectorAll('.refugio-item, .menu-refugio-item');
             allItems.forEach(item => {
                 const itemText = item.querySelector('.refugio-name, .menu-refugio-name');
                 if (itemText && itemText.textContent.trim() === refugio.nombre.trim()) {
                     item.classList.add('active');
-
-                    // Scroll suave al elemento destacado
                     item.scrollIntoView({ 
                         behavior: 'smooth', 
                         block: 'center' 
@@ -1306,6 +1324,7 @@
                 }
             });
         }
+
 
         function clearActiveItems() {
             const activeItems = document.querySelectorAll('.refugio-item.active, .menu-refugio-item.active');
