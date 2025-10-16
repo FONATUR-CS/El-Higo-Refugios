@@ -44,7 +44,7 @@
             z-index: 1;
         }
 
-        /* Header mejorado */
+        /* Header */
         .header {
             position: fixed;
             top: 0;
@@ -298,7 +298,7 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         }
 
-        /* Botones de control del mapa */
+        /* Botones de control del mapa mejorados */
         .map-controls {
             position: fixed;
             right: 360px;
@@ -306,28 +306,42 @@
             z-index: 800;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .map-control-btn {
-            width: 48px;
-            height: 48px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             color: white;
             cursor: pointer;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            padding: 0.75rem 1rem;
+            gap: 0.5rem;
             transition: all 0.3s ease;
             box-shadow: var(--shadow);
+            min-width: 120px;
         }
 
         .map-control-btn:hover {
             background: var(--primary-color);
-            transform: scale(1.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Noto Sans', sans-serif;
+            text-align: center;
+        }
+
+        .btn-icon {
+            font-size: 1.5rem;
         }
 
         /* Scrollbar personalizado */
@@ -372,7 +386,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Popup personalizado sin animaciones molestas */
+        /* Popup personalizado */
         .leaflet-popup-content-wrapper {
             background: var(--card-bg);
             color: white;
@@ -484,7 +498,6 @@
 
         /* RESPONSIVE MEJORADO PARA MÓVIL */
         @media (max-width: 768px) {
-            /* Header responsive */
             .header {
                 height: auto;
                 min-height: 60px;
@@ -531,7 +544,6 @@
                 padding: 0.65rem 0.85rem;
             }
 
-            /* Panel izquierdo en móvil */
             .sidebar-left {
                 width: 100%;
                 top: auto;
@@ -584,7 +596,6 @@
                 font-size: 0.8rem;
             }
 
-            /* Panel derecho en móvil - arriba a la derecha */
             .sidebar-right {
                 right: 10px;
                 left: auto;
@@ -617,26 +628,31 @@
                 margin-top: 0.5rem;
             }
 
-            /* Controles del mapa en móvil */
             .map-controls {
                 right: 10px;
                 top: 340px;
                 z-index: 850;
+                gap: 0.5rem;
             }
 
             .map-control-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 1.1rem;
+                min-width: 90px;
+                padding: 0.5rem 0.75rem;
             }
 
-            /* Ajustar mapa para no tapar contenido */
+            .btn-label {
+                font-size: 0.65rem;
+            }
+
+            .btn-icon {
+                font-size: 1.2rem;
+            }
+
             #map {
                 top: 140px;
                 bottom: 40vh;
             }
 
-            /* Marcadores más pequeños en móvil */
             .marker-label {
                 font-size: 9px;
                 padding: 4px 6px;
@@ -652,7 +668,6 @@
                 font-size: 11px;
             }
 
-            /* Popup más pequeño en móvil */
             .popup-content {
                 padding: 0.5rem;
             }
@@ -721,7 +736,7 @@
     <header class="header">
         <div class="header-left">
             <div class="logo-container">
-                <img src="Logo_FONATUR.jpg" alt="FONATUR" class="logo-fonatur">
+                <img src="Logo_FONATUR.png" alt="FONATUR" class="logo-fonatur">
                 <div class="header-title">
                     <h1>Refugios Temporales</h1>
                     <span class="subtitle">El Higo, Veracruz, México</span>
@@ -753,8 +768,14 @@
     </aside>
 
     <div class="map-controls">
-        <button class="map-control-btn" id="centerBtn" title="Centrar vista">🎯</button>
-        <button class="map-control-btn" id="layerBtn" title="Cambiar vista">🗺️</button>
+        <button class="map-control-btn" id="centerBtn">
+            <span class="btn-label">Centrar Vista</span>
+            <span class="btn-icon">🎯</span>
+        </button>
+        <button class="map-control-btn" id="layerBtn">
+            <span class="btn-label">Cambiar Vista</span>
+            <span class="btn-icon">🗺️</span>
+        </button>
     </div>
 
     <aside class="sidebar-right" id="sidebarRight">
@@ -793,9 +814,6 @@
             }),
             streets: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: 'OpenStreetMap'
-            }),
-            dark: L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-                attribution: 'Stadia Maps'
             })
         };
 
@@ -896,8 +914,6 @@
                 animate: true,
                 duration: 1.5
             });
-
-            // Eliminar animación que causa el temblor
         }
 
         function getUserLocation() {
@@ -1031,6 +1047,21 @@
             });
         }
 
+        // Centrar vista solo en los refugios, no en ubicación del usuario
+        function centerToRefugios() {
+            if (filteredRefugios.length === 0) return;
+
+            const bounds = L.latLngBounds(
+                filteredRefugios.map(r => [r.lat, r.lng])
+            );
+
+            map.flyToBounds(bounds, {
+                padding: [50, 50],
+                animate: true,
+                duration: 1.5
+            });
+        }
+
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
 
@@ -1042,18 +1073,9 @@
             updateNearestShelter();
         });
 
+        // Botón centrar vista - solo centra a los puntos
         document.getElementById('centerBtn').addEventListener('click', function() {
-            if (userLocation) {
-                map.flyTo([userLocation.lat, userLocation.lng], 15, {
-                    animate: true,
-                    duration: 1.5
-                });
-            } else {
-                map.flyTo([21.7715, -98.4515], 15, {
-                    animate: true,
-                    duration: 1.5
-                });
-            }
+            centerToRefugios();
 
             anime({
                 targets: this,
@@ -1063,14 +1085,17 @@
             });
         });
 
+        // Botón cambiar vista - solo alterna entre satélite y calles
         document.getElementById('layerBtn').addEventListener('click', function() {
-            const layers_array = ['satellite', 'streets', 'dark'];
-            const currentIndex = layers_array.indexOf(currentLayer);
-            const nextIndex = (currentIndex + 1) % layers_array.length;
-
-            map.removeLayer(layers[currentLayer]);
-            currentLayer = layers_array[nextIndex];
-            map.addLayer(layers[currentLayer]);
+            if (currentLayer === 'satellite') {
+                map.removeLayer(layers.satellite);
+                map.addLayer(layers.streets);
+                currentLayer = 'streets';
+            } else {
+                map.removeLayer(layers.streets);
+                map.addLayer(layers.satellite);
+                currentLayer = 'satellite';
+            }
 
             anime({
                 targets: this,
