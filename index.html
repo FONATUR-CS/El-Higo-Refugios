@@ -213,6 +213,12 @@
             transform: translateX(4px);
         }
 
+        .refugio-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(77, 184, 184, 0.3);
+        }
+
         .refugio-name {
             font-weight: 600;
             margin-bottom: 0.5rem;
@@ -397,7 +403,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Popup personalizado */
+        /* Popup */
         .leaflet-popup-content-wrapper {
             background: var(--card-bg);
             color: white;
@@ -466,7 +472,7 @@
             background: var(--secondary-color);
         }
 
-        /* Marcadores con etiquetas optimizadas */
+        /* Marcadores optimizados */
         .custom-marker-container {
             display: flex;
             flex-direction: column;
@@ -513,18 +519,17 @@
             font-size: 12px;
         }
 
-        /* MÓVIL - MENÚS DESPLEGABLES */
+        /* MÓVIL - MENÚ HAMBURGUESA */
         .hamburger-menu {
             display: none;
         }
 
         @media (max-width: 768px) {
-            /* Ocultar panel izquierdo en móvil */
+            /* Ocultar panel izquierdo */
             .sidebar-left {
                 display: none;
             }
 
-            /* Header responsive */
             .header {
                 height: auto;
                 min-height: 60px;
@@ -571,7 +576,7 @@
                 padding: 0.65rem 0.85rem;
             }
 
-            /* Mostrar menú hamburguesa */
+            /* Menú hamburguesa */
             .hamburger-menu {
                 display: block;
                 position: fixed;
@@ -599,7 +604,6 @@
                 font-size: 1.5rem;
             }
 
-            /* Menú hamburguesa */
             .refugios-menu {
                 position: fixed;
                 top: 0;
@@ -700,7 +704,6 @@
                 font-family: 'Noto Sans', sans-serif;
             }
 
-            /* Controles en móvil */
             .controls-container {
                 right: 10px;
                 top: 100px;
@@ -756,12 +759,10 @@
                 margin-top: 0.25rem;
             }
 
-            /* Mapa ocupa más espacio */
             #map {
                 top: 140px;
             }
 
-            /* Marcadores más pequeños en móvil */
             .marker-label {
                 font-size: 8px;
                 padding: 3px 5px;
@@ -778,7 +779,6 @@
                 font-size: 10px;
             }
 
-            /* Popup más pequeño */
             .popup-content {
                 padding: 0.5rem;
             }
@@ -1039,9 +1039,27 @@
         }
 
         function flyToRefugio(refugio) {
+            // Zoom específico al refugio con animación suave
             map.flyTo([refugio.lat, refugio.lng], 18, {
                 animate: true,
-                duration: 1.5
+                duration: 1.5,
+                easeLinearity: 0.25
+            });
+        }
+
+        function centerToRefugios() {
+            if (filteredRefugios.length === 0) return;
+
+            const bounds = L.latLngBounds(
+                filteredRefugios.map(r => [r.lat, r.lng])
+            );
+
+            // Zoom más amplio con mayor padding
+            map.fitBounds(bounds, {
+                padding: [100, 100], // Padding aumentado para vista más amplia
+                animate: true,
+                duration: 1.5,
+                easeLinearity: 0.25
             });
         }
 
@@ -1173,21 +1191,27 @@
             const lista = document.getElementById('refugiosList');
             const menuLista = document.getElementById('menuRefugiosList');
 
+            function clearActiveItems() {
+                const activeItems = document.querySelectorAll('.refugio-item.active, .menu-refugio-item.active');
+                activeItems.forEach(item => item.classList.remove('active'));
+            }
+
             if (lista) {
                 if (filteredRefugios.length === 0) {
                     lista.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No se encontraron refugios</div>';
                 } else {
-                    lista.innerHTML = filteredRefugios.map(refugio => {
+                    lista.innerHTML = filteredRefugios.map((refugio, index) => {
                         return `
-                            <div class="refugio-item" onclick="flyToRefugio(${JSON.stringify(refugio).replace(/"/g, '\"')})">
+                            <div class="refugio-item" onclick="flyToRefugioFromList(${JSON.stringify(refugio).replace(/"/g, '&quot;')})">
                                 <div class="refugio-name">${refugio.nombre}</div>
                                 <div class="refugio-tipo">${refugio.tipo}</div>
                             </div>
                         `;
                     }).join('');
 
+                    const items = document.querySelectorAll('.refugio-item');
                     anime({
-                        targets: '.refugio-item',
+                        targets: items,
                         translateX: [-50, 0],
                         opacity: [0, 1],
                         duration: 600,
@@ -1201,17 +1225,18 @@
                 if (filteredRefugios.length === 0) {
                     menuLista.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No se encontraron refugios</div>';
                 } else {
-                    menuLista.innerHTML = filteredRefugios.map(refugio => {
+                    menuLista.innerHTML = filteredRefugios.map((refugio, index) => {
                         return `
-                            <div class="menu-refugio-item" onclick="flyToRefugio(${JSON.stringify(refugio).replace(/"/g, '\"')});closeRefugiosMenu()">
+                            <div class="menu-refugio-item" onclick="flyToRefugioFromList(${JSON.stringify(refugio).replace(/"/g, '&quot;')});closeRefugiosMenu()">
                                 <div class="menu-refugio-name">${refugio.nombre}</div>
                                 <div class="menu-refugio-tipo">${refugio.tipo}</div>
                             </div>
                         `;
                     }).join('');
 
+                    const menuItems = document.querySelectorAll('.menu-refugio-item');
                     anime({
-                        targets: '.menu-refugio-item',
+                        targets: menuItems,
                         translateX: [-50, 0],
                         opacity: [0, 1],
                         duration: 600,
@@ -1222,49 +1247,65 @@
             }
         }
 
-        function centerToRefugios() {
-            if (filteredRefugios.length === 0) return;
+        function flyToRefugioFromList(refugio) {
+            flyToRefugio(refugio);
 
-            const bounds = L.latLngBounds(
-                filteredRefugios.map(r => [r.lat, r.lng])
-            );
+            // Destacar el elemento de la lista
+            clearActiveItems();
 
-            map.flyToBounds(bounds, {
-                padding: [50, 50],
-                animate: true,
-                duration: 1.5
+            // Buscar y destacar el elemento correspondiente
+            const allItems = document.querySelectorAll('.refugio-item, .menu-refugio-item');
+            allItems.forEach(item => {
+                const itemText = item.querySelector('.refugio-name, .menu-refugio-name');
+                if (itemText && itemText.textContent.trim() === refugio.nombre.trim()) {
+                    item.classList.add('active');
+
+                    // Scroll suave al elemento destacado
+                    item.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }
             });
         }
 
-        // Menú hamburguesa (móvil)
         function closeRefugiosMenu() {
             const menu = document.getElementById('refugiosMenu');
             if (menu) menu.classList.remove('active');
         }
 
-        function initMobileMenu() {
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const closeRefugiosMenu = document.getElementById('closeRefugiosMenu');
-            const refugiosMenu = document.getElementById('refugiosMenu');
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
 
-            if (hamburgerBtn) {
-                hamburgerBtn.addEventListener('click', function() {
-                    if (refugiosMenu) refugiosMenu.classList.add('active');
-                });
-            }
+                        if (userMarker) {
+                            map.removeLayer(userMarker);
+                        }
 
-            if (closeRefugiosMenu) {
-                closeRefugiosMenu.addEventListener('click', function() {
-                    if (refugiosMenu) refugiosMenu.classList.remove('active');
-                });
-            }
+                        const userIcon = L.divIcon({
+                            html: '<div style="width: 20px; height: 20px; background: #3b82f6; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);"></div>',
+                            iconSize: [20, 20],
+                            className: ''
+                        });
 
-            if (map) {
-                map.addEventListener('click', function() {
-                    if (refugiosMenu && refugiosMenu.classList.contains('active')) {
-                        refugiosMenu.classList.remove('active');
+                        userMarker = L.marker([userLocation.lat, userLocation.lng], {
+                            icon: userIcon
+                        }).addTo(map);
+
+                        updateNearestShelter();
+                    },
+                    error => {
+                        console.warn('No se pudo obtener la ubicación');
+                        updateNearestShelter();
                     }
-                });
+                );
+            } else {
+                updateNearestShelter();
             }
         }
 
@@ -1283,20 +1324,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             const centerBtn = document.getElementById('centerBtn');
             const layerBtn = document.getElementById('layerBtn');
-
-            function centerToRefugios() {
-                if (filteredRefugios.length === 0) return;
-
-                const bounds = L.latLngBounds(
-                    filteredRefugios.map(r => [r.lat, r.lng])
-                );
-
-                map.flyToBounds(bounds, {
-                    padding: [50, 50],
-                    animate: true,
-                    duration: 1.5
-                });
-            }
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const closeRefugiosMenuBtn = document.getElementById('closeRefugiosMenu');
+            const refugiosMenu = document.getElementById('refugiosMenu');
 
             if (centerBtn) {
                 centerBtn.addEventListener('click', function() {
@@ -1315,11 +1345,15 @@
             if (layerBtn) {
                 layerBtn.addEventListener('click', function() {
                     if (currentLayer === 'satellite') {
-                        map.removeLayer(layers.satellite);
+                        if (map.hasLayer(layers.satellite)) {
+                            map.removeLayer(layers.satellite);
+                        }
                         map.addLayer(layers.streets);
                         currentLayer = 'streets';
                     } else {
-                        map.removeLayer(layers.streets);
+                        if (map.hasLayer(layers.streets)) {
+                            map.removeLayer(layers.streets);
+                        }
                         map.addLayer(layers.satellite);
                         currentLayer = 'satellite';
                     }
@@ -1333,11 +1367,37 @@
                     });
                 });
             }
+
+            // Menú hamburguesa
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener('click', function() {
+                    if (refugiosMenu) {
+                        refugiosMenu.classList.add('active');
+                        updateRefugiosList();
+                    }
+                });
+            }
+
+            if (closeRefugiosMenuBtn) {
+                closeRefugiosMenuBtn.addEventListener('click', function() {
+                    if (refugiosMenu) {
+                        refugiosMenu.classList.remove('active');
+                    }
+                });
+            }
+
+            // Cerrar menú al tocar el mapa
+            if (map && refugiosMenu) {
+                map.on('click', function() {
+                    if (refugiosMenu.classList.contains('active')) {
+                        refugiosMenu.classList.remove('active');
+                    }
+                });
+            }
         });
 
         document.addEventListener('DOMContentLoaded', function() {
             initMap();
-            initMobileMenu();
 
             anime({
                 targets: '.sidebar-left',
@@ -1366,6 +1426,8 @@
         });
 
         window.flyToRefugio = flyToRefugio;
+        window.flyToRefugioFromList = flyToRefugioFromList;
+        window.closeRefugiosMenu = closeRefugiosMenu;
     </script>
 </body>
 </html>
