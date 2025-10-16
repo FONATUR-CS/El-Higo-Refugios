@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -403,21 +403,40 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Popup */
+        /* POPUP SIN TEMBLOR - SIN ANIMACIONES */
         .leaflet-popup-content-wrapper {
-            background: var(--card-bg);
-            color: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            background: var(--card-bg) !important;
+            color: white !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
+            border: none !important;
+            animation: none !important;
+            transform: none !important;
+            transition: none !important;
         }
 
         .leaflet-popup-tip {
-            background: var(--card-bg);
+            background: var(--card-bg) !important;
+            box-shadow: none !important;
+            border: none !important;
+            animation: none !important;
+        }
+
+        .leaflet-popup-content {
+            margin: 0 !important;
+            animation: none !important;
+            transform: none !important;
+        }
+
+        .custom-popup .leaflet-popup-content-wrapper {
+            animation: none !important;
+            transition: none !important;
         }
 
         .popup-content {
-            padding: 0.5rem;
+            padding: 0.75rem;
             font-family: 'Noto Sans', sans-serif;
+            animation: none !important;
         }
 
         .popup-title {
@@ -426,6 +445,7 @@
             margin-bottom: 0.75rem;
             color: var(--accent-color);
             font-family: 'Noto Sans', sans-serif;
+            animation: none !important;
         }
 
         .popup-info {
@@ -461,11 +481,12 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease;
             text-decoration: none;
             display: block;
             text-align: center;
             font-family: 'Noto Sans', sans-serif;
+            animation: none !important;
         }
 
         .popup-directions:hover {
@@ -690,6 +711,12 @@
                 transform: translateX(4px);
             }
 
+            .menu-refugio-item.active {
+                background: rgba(255, 255, 255, 0.15);
+                border-color: var(--accent-color);
+                box-shadow: 0 0 0 2px rgba(77, 184, 184, 0.3);
+            }
+
             .menu-refugio-name {
                 font-weight: 600;
                 margin-bottom: 0.5rem;
@@ -795,6 +822,13 @@
             .popup-directions {
                 padding: 0.6rem;
                 font-size: 0.85rem;
+            }
+
+            /* Popup en móvil SIN temblor */
+            .leaflet-popup-content-wrapper {
+                animation: none !important;
+                transform: none !important;
+                transition: none !important;
             }
         }
 
@@ -911,7 +945,7 @@
         <div class="nearest-panel" id="nearestPanel">
             <div class="nearest-header">
                 <span class="nearest-icon">📍</span>
-                <span class="nearest-label">Refugio más Cercano</span>
+                <span class="nearest-label">Más Cercano</span>
             </div>
             <div class="nearest-name" id="nearestNamePanel">Calculando...</div>
             <div class="nearest-distance">
@@ -961,13 +995,6 @@
 
             markersLayer = L.layerGroup();
             map.addLayer(markersLayer);
-
-            anime({
-                targets: '#map',
-                opacity: [0, 1],
-                duration: 1000,
-                easing: 'easeOutQuad'
-            });
 
             loadRefugios();
             getUserLocation();
@@ -1023,10 +1050,15 @@
 
                 marker.bindPopup(createPopupContent(refugio), {
                     maxWidth: 300,
-                    className: 'custom-popup'
+                    className: 'custom-popup',
+                    closeButton: true,
+                    autoClose: true,
+                    closeOnEscapeKey: true,
+                    closeOnClick: true
                 });
 
                 marker.on('click', function() {
+                    // SIN ANIMACIÓN EXTRA - solo zoom del mapa
                     flyToRefugio(refugio);
                 });
 
@@ -1039,27 +1071,10 @@
         }
 
         function flyToRefugio(refugio) {
-            // Zoom específico al refugio con animación suave
+            // Solo zoom del mapa - SIN animaciones extra
             map.flyTo([refugio.lat, refugio.lng], 18, {
                 animate: true,
-                duration: 1.5,
-                easeLinearity: 0.25
-            });
-        }
-
-        function centerToRefugios() {
-            if (filteredRefugios.length === 0) return;
-
-            const bounds = L.latLngBounds(
-                filteredRefugios.map(r => [r.lat, r.lng])
-            );
-
-            // Zoom más amplio con mayor padding
-            map.fitBounds(bounds, {
-                padding: [140, 140], // Padding aumentado para vista más amplia5
-                animate: true,
-                duration: 1.8,
-                easeLinearity: 0.28
+                duration: 1.5
             });
         }
 
@@ -1200,7 +1215,7 @@
                 if (filteredRefugios.length === 0) {
                     lista.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No se encontraron refugios</div>';
                 } else {
-                    lista.innerHTML = filteredRefugios.map((refugio, index) => {
+                    lista.innerHTML = filteredRefugios.map((refugio) => {
                         return `
                             <div class="refugio-item" onclick="flyToRefugioFromList(${JSON.stringify(refugio).replace(/"/g, '&quot;')})">
                                 <div class="refugio-name">${refugio.nombre}</div>
@@ -1225,7 +1240,7 @@
                 if (filteredRefugios.length === 0) {
                     menuLista.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No se encontraron refugios</div>';
                 } else {
-                    menuLista.innerHTML = filteredRefugios.map((refugio, index) => {
+                    menuLista.innerHTML = filteredRefugios.map((refugio) => {
                         return `
                             <div class="menu-refugio-item" onclick="flyToRefugioFromList(${JSON.stringify(refugio).replace(/"/g, '&quot;')});closeRefugiosMenu()">
                                 <div class="menu-refugio-name">${refugio.nombre}</div>
@@ -1248,6 +1263,7 @@
         }
 
         function flyToRefugioFromList(refugio) {
+            // Solo zoom del mapa - SIN animaciones extra
             flyToRefugio(refugio);
 
             // Destacar el elemento de la lista
@@ -1269,58 +1285,32 @@
             });
         }
 
+        function clearActiveItems() {
+            const activeItems = document.querySelectorAll('.refugio-item.active, .menu-refugio-item.active');
+            activeItems.forEach(item => item.classList.remove('active'));
+        }
+
         function closeRefugiosMenu() {
             const menu = document.getElementById('refugiosMenu');
             if (menu) menu.classList.remove('active');
         }
 
-        function getUserLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    position => {
-                        userLocation = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude
-                        };
+        function centerToRefugios() {
+            if (filteredRefugios.length === 0) return;
 
-                        if (userMarker) {
-                            map.removeLayer(userMarker);
-                        }
+            const bounds = L.latLngBounds(
+                filteredRefugios.map(r => [r.lat, r.lng])
+            );
 
-                        const userIcon = L.divIcon({
-                            html: '<div style="width: 20px; height: 20px; background: #3b82f6; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);"></div>',
-                            iconSize: [20, 20],
-                            className: ''
-                        });
-
-                        userMarker = L.marker([userLocation.lat, userLocation.lng], {
-                            icon: userIcon
-                        }).addTo(map);
-
-                        updateNearestShelter();
-                    },
-                    error => {
-                        console.warn('No se pudo obtener la ubicación');
-                        updateNearestShelter();
-                    }
-                );
-            } else {
-                updateNearestShelter();
-            }
+            // Vista más amplia con padding aumentado
+            map.fitBounds(bounds, {
+                padding: [120, 120], // ← Más espacio alrededor
+                animate: true,
+                duration: 1.6,
+                easeLinearity: 0.28
+            });
         }
 
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-
-            filteredRefugios = refugiosData.filter(refugio => {
-                return refugio.nombre.toLowerCase().includes(searchTerm);
-            });
-
-            loadRefugios();
-            updateNearestShelter();
-        });
-
-        // Botones de control del mapa
         document.addEventListener('DOMContentLoaded', function() {
             const centerBtn = document.getElementById('centerBtn');
             const layerBtn = document.getElementById('layerBtn');
@@ -1394,11 +1384,12 @@
                     }
                 });
             }
+
+            initMap();
         });
 
+        // Inicializar al cargar
         document.addEventListener('DOMContentLoaded', function() {
-            initMap();
-
             anime({
                 targets: '.sidebar-left',
                 translateX: [-100, 0],
@@ -1428,6 +1419,7 @@
         window.flyToRefugio = flyToRefugio;
         window.flyToRefugioFromList = flyToRefugioFromList;
         window.closeRefugiosMenu = closeRefugiosMenu;
+        window.clearActiveItems = clearActiveItems;
     </script>
 </body>
 </html>
