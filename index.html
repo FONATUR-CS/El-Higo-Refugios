@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -233,16 +233,17 @@
             font-family: 'Noto Sans', sans-serif;
         }
 
-        /* CONTROLES ALIGNADOS A LA DERECHA - DESKTOP */
+        /* CONTROLES CENTRADOS HORIZONTALMENTE */
         .controls-container {
             position: fixed;
-            right: 20px;
+            left: 50%;
             top: 100px;
+            transform: translateX(-50%);
             z-index: 800;
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
-            align-items: flex-end;
+            align-items: center; /* ← Centra los elementos horizontalmente */
         }
 
         /* Botones de control del mapa */
@@ -261,6 +262,7 @@
             transition: all 0.3s ease;
             box-shadow: var(--shadow);
             min-width: 120px;
+            width: 120px; /* ← Ancho fijo para uniformidad */
         }
 
         .map-control-btn:hover {
@@ -281,19 +283,22 @@
             font-size: 1.5rem;
         }
 
-        /* Panel más cercano compacto - DESKTOP */
+        /* Panel más cercano - MISMO TAMAÑO QUE BOTONES */
         .nearest-panel {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             color: white;
+            width: 120px; /* ← MISMO ANCHO QUE BOTONES */
             min-width: 120px;
-            max-width: 160px;
+            max-width: 120px; /* ← SIN ANCHO MÁXIMO EXTRA */
             transition: all 0.3s ease;
             box-shadow: var(--shadow);
             cursor: default;
             margin-top: 0.75rem;
-            padding: 0.75rem;
+            padding: 0.5rem 0.75rem; /* ← PADDING AJUSTADO */
+            text-align: center;
+            overflow: hidden;
         }
 
         .nearest-panel:hover {
@@ -304,57 +309,69 @@
         .nearest-header {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
+            justify-content: center; /* ← CENTRA HORIZONTALMENTE */
+            gap: 0.25rem;
+            margin-bottom: 0.25rem;
+            flex-direction: column; /* ← APILADO VERTICAL EN POCO ESPACIO */
         }
 
         .nearest-icon {
-            font-size: 1.2rem;
+            font-size: 1.1rem; /* ← TAMANO REDUCIDO */
         }
 
         .nearest-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem; /* ← FUENTE MÁS PEQUEÑA */
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             font-family: 'Noto Sans', sans-serif;
+            white-space: nowrap;
         }
 
         .nearest-name {
-            font-size: 0.9rem;
+            font-size: 0.75rem; /* ← FUENTE REDUCIDA */
             font-weight: 700;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
             font-family: 'Noto Sans', sans-serif;
-            line-height: 1.2;
+            line-height: 1.1;
             word-break: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            max-height: 1.5em;
         }
 
         .nearest-distance {
             display: flex;
             align-items: center;
-            gap: 0.25rem;
-            font-size: 0.85rem;
+            justify-content: center; /* ← CENTRA HORIZONTALMENTE */
+            gap: 0.2rem;
+            font-size: 0.75rem; /* ← FUENTE REDUCIDA */
             font-weight: 600;
             color: #fbbf24;
             font-family: 'Noto Sans', sans-serif;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
         .nearest-directions {
             width: 100%;
-            padding: 0.5rem;
+            padding: 0.4rem 0.5rem; /* ← PADDING MÁS COMPACTO */
             background: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.8rem;
+            font-size: 0.65rem; /* ← FUENTE MÁS PEQUEÑA */
             text-decoration: none;
             display: block;
             text-align: center;
             font-family: 'Noto Sans', sans-serif;
+            line-height: 1.2;
+            white-space: nowrap;
         }
 
         .nearest-directions:hover {
@@ -403,7 +420,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* POPUP SIN TEMBLOR - SIN ANIMACIONES */
+        /* POPUP SIN TEMBLOR */
         .leaflet-popup-content-wrapper {
             background: var(--card-bg) !important;
             color: white !important;
@@ -540,17 +557,14 @@
             font-size: 12px;
         }
 
-        /* MÓVIL - MENÚ HAMBURGUESA */
-        .hamburger-menu {
-            display: none;
-        }
-
+        /* MÓVIL - RESPONSIVE */
         @media (max-width: 768px) {
-            /* Ocultar panel izquierdo */
+            /* Ocultar panel izquierdo en móvil */
             .sidebar-left {
-                display: none;
+                display: none !important;
             }
 
+            /* Header responsive */
             .header {
                 height: auto;
                 min-height: 60px;
@@ -597,9 +611,9 @@
                 padding: 0.65rem 0.85rem;
             }
 
-            /* Menú hamburguesa */
+            /* Mostrar menú hamburguesa */
             .hamburger-menu {
-                display: block;
+                display: block !important;
                 position: fixed;
                 top: 100px;
                 left: 10px;
@@ -625,6 +639,7 @@
                 font-size: 1.5rem;
             }
 
+            /* Menú hamburguesa */
             .refugios-menu {
                 position: fixed;
                 top: 0;
@@ -731,15 +746,19 @@
                 font-family: 'Noto Sans', sans-serif;
             }
 
+            /* Controles centrados en móvil */
             .controls-container {
-                right: 10px;
+                left: 50%;
+                transform: translateX(-50%);
                 top: 100px;
+                right: auto;
                 gap: 0.5rem;
-                align-items: flex-end;
+                align-items: center;
             }
 
             .map-control-btn {
                 min-width: 90px;
+                width: 90px; /* ← ANCHO FIJO EN MÓVIL */
                 padding: 0.5rem 0.75rem;
             }
 
@@ -752,44 +771,51 @@
             }
 
             .nearest-panel {
+                width: 90px; /* ← MISMO TAMAÑO QUE BOTONES EN MÓVIL */
                 min-width: 90px;
-                max-width: 110px;
-                padding: 0.5rem 0.75rem;
+                max-width: 90px;
+                padding: 0.4rem 0.5rem;
                 margin-top: 0.5rem;
+                text-align: center;
             }
 
             .nearest-header {
-                margin-bottom: 0.25rem;
-                gap: 0.25rem;
+                flex-direction: column;
+                gap: 0.1rem;
+                margin-bottom: 0.2rem;
             }
 
             .nearest-icon {
-                font-size: 1rem;
+                font-size: 0.9rem;
             }
 
             .nearest-label {
-                font-size: 0.65rem;
+                font-size: 0.6rem;
             }
 
             .nearest-name {
-                font-size: 0.75rem;
+                font-size: 0.65rem;
+                margin-bottom: 0.15rem;
+                max-height: 1.3em;
             }
 
             .nearest-distance {
-                font-size: 0.8rem;
-                gap: 0.2rem;
+                font-size: 0.65rem;
+                gap: 0.1rem;
+                margin-bottom: 0.2rem;
             }
 
             .nearest-directions {
-                padding: 0.4rem 0.6rem;
-                font-size: 0.7rem;
-                margin-top: 0.25rem;
+                padding: 0.3rem 0.4rem;
+                font-size: 0.6rem;
             }
 
+            /* Mapa ocupa más espacio en móvil */
             #map {
                 top: 140px;
             }
 
+            /* Marcadores más pequeños en móvil */
             .marker-label {
                 font-size: 8px;
                 padding: 3px 5px;
@@ -806,6 +832,7 @@
                 font-size: 10px;
             }
 
+            /* Popup más compacto en móvil */
             .popup-content {
                 padding: 0.5rem;
             }
@@ -823,13 +850,6 @@
                 padding: 0.6rem;
                 font-size: 0.85rem;
             }
-
-            /* Popup en móvil SIN temblor */
-            .leaflet-popup-content-wrapper {
-                animation: none !important;
-                transform: none !important;
-                transition: none !important;
-            }
         }
 
         /* Tablets */
@@ -839,7 +859,10 @@
             }
 
             .controls-container {
-                right: 15px;
+                left: 50%;
+                transform: translateX(-50%);
+                top: 100px;
+                right: auto;
             }
 
             .header-title h1 {
@@ -852,6 +875,13 @@
 
             .map-control-btn {
                 min-width: 110px;
+                width: 110px;
+            }
+
+            .nearest-panel {
+                width: 110px;
+                min-width: 110px;
+                max-width: 110px;
             }
         }
 
@@ -862,7 +892,9 @@
             }
 
             .controls-container {
-                right: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                top: 100px;
             }
         }
     </style>
@@ -930,7 +962,7 @@
         </div>
     </aside>
 
-    <!-- Controles alineados a la derecha - DESKTOP -->
+    <!-- Controles centrados horizontalmente -->
     <div class="controls-container">
         <button class="map-control-btn" id="centerBtn">
             <span class="btn-label">Centrar Vista</span>
@@ -941,11 +973,11 @@
             <span class="btn-icon">🗺️</span>
         </button>
 
-        <!-- Panel más cercano compacto -->
+        <!-- Panel más cercano - MISMO TAMAÑO Y CENTRADO -->
         <div class="nearest-panel" id="nearestPanel">
             <div class="nearest-header">
                 <span class="nearest-icon">📍</span>
-                <span class="nearest-label">Refugio más cercano</span>
+                <span class="nearest-label">Refugio Más Cercano</span>
             </div>
             <div class="nearest-name" id="nearestNamePanel">Calculando...</div>
             <div class="nearest-distance">
@@ -963,7 +995,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script>
-        const refugiosData = [{'numero': '1', 'nombre': 'Escuela Benito Juárez', 'tipo': 'Escuela', 'lat': 21.77431326, 'lng': -98.4486667, 'direccion': 'Zona Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/rtuz4XMLyuHW3pYs8'}, {'numero': '2', 'nombre': 'Sección 79 CONASUPO', 'tipo': 'Salón', 'lat': 21.7747128, 'lng': -98.44911549, 'direccion': 'Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/vpfxnqkuizzvxxmv6'}, {'numero': '3', 'nombre': 'Capilla San José', 'tipo': 'Capilla', 'lat': 21.77483527, 'lng': -98.44938256, 'direccion': 'Col. Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/4ZTkTJGtjncHy6PV8'}, {'numero': '4', 'nombre': 'Biblioteca de la 20', 'tipo': 'Escuela', 'lat': 21.77323564, 'lng': -98.45023293, 'direccion': 'Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/wECJZSzwE6jUUirv9'}, {'numero': '5', 'nombre': 'Primaria Vicente Guerrero', 'tipo': 'Escuela', 'lat': 21.77100048, 'lng': -98.45499366, 'direccion': 'Sector Norte, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/pdGh2Q9mgPCV9Y7s5'}, {'numero': '6', 'nombre': 'CNC', 'tipo': 'Centro Comunitario', 'lat': 21.76969429, 'lng': -98.4544362, 'direccion': 'Col. Hidalgo, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/7av6hxDhcr733R2b9'}, {'numero': '7', 'nombre': 'Iglesia Nuestra Señora del Rosario', 'tipo': 'Iglesia', 'lat': 21.76850124, 'lng': -98.45386366, 'direccion': 'Sector Sur, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/emumtg2rr8RdcazYA'}, {'numero': '8', 'nombre': 'Sección 79', 'tipo': 'Salón', 'lat': 21.76831327, 'lng': -98.4544527, 'direccion': 'Col. Hidalgo, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/CmDzwMjYa1Gp2h1r5'}, {'numero': '9', 'nombre': 'Nocturna', 'tipo': 'Escuela', 'lat': 21.76911099, 'lng': -98.45346147, 'direccion': 'Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/qPFRyBSm8atFfWRi7'}, {'numero': '10', 'nombre': 'Iglesia del 7mo día', 'tipo': 'Iglesia', 'lat': 21.76812305, 'lng': -98.45248927, 'direccion': 'Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/PfxAZEtcU17pyS5h7'}, {'numero': '11', 'nombre': 'Auditorio Municipal', 'tipo': 'Auditorio', 'lat': 21.77024989, 'lng': -98.45285924, 'direccion': 'Col. Benito Juárez, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/P38fVEruvHGu5CVo9'}];
+        const refugiosData = [{'numero': '1', 'nombre': 'Escuela Benito Juárez', 'tipo': 'Escuela', 'lat': 21.77431326, 'lng': -98.4486667, 'direccion': 'Zona Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/rtuz4XMLyuHW3pYs8'}, {'numero': '2', 'nombre': 'Sección 79 CONASUPO', 'tipo': 'Salón', 'lat': 21.7747128, 'lng': -98.44911549, 'direccion': 'Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/vpfxnqkuizzvxxmv6'}, {'numero': '3', 'nombre': 'Capilla San José', 'tipo': 'Capilla', 'lat': 21.77483527, 'lng': -98.44938256, 'direccion': 'Col. Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/4ZTkTJGtjncHy6PV8'}, {'numero': '4', 'nombre': 'Biblioteca de la 20', 'tipo': 'Escuela', 'lat': 21.77323564, 'lng': -98.45023293, 'direccion': 'Centro Histórico, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/wECJZSzwE6jUUirv9'}, {'numero': '5', 'nombre': 'Primaria Vicente Guerrero', 'tipo': 'Escuela', 'lat': 21.77100048, 'lng': -98.45499366, 'direccion': 'Sector Norte, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/pdGh2Q9mgPCV9Y7s5'}, {'numero': '6', 'nombre': 'CNC', 'tipo': 'Centro Comunitario', 'lat': 21.76969429, 'lng': -98.4544362, 'direccion': 'Col. Hidalgo, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/7av6hxDhcr733R2b9'}, {'numero': '7', 'nombre': 'Iglesia Nuestra Señora del Rosario', 'tipo': 'Iglesia', 'lat': 21.76850124, 'lng': -98.45386366, 'direccion': 'Sector Sur, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/emumtg2rr8RdcazYA'}, {'numero': '8', 'nombre': 'Sección 79', 'tipo': 'Salón', 'lat': 21.76831327, 'lng': -98.4544527, 'direccion': 'Col. Hidalgo, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/CmDzwMjYa1Gp2h1r5'}, {'numero': '9', 'nombre': 'Nocturna', 'tipo': 'Escuela', 'lat': 21.76911099, 'lng': -98.45346147, 'direccion': 'Centro Histórico, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/qPFRyBSm8atFfWRi7'}, {'numero': '10', 'nombre': 'Iglesia del 7mo día', 'tipo': 'Iglesia', 'lat': 21.76812305, 'lng': -98.45248927, 'direccion': 'Centro, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/PfxAZEtcU17pyS5h7'}, {'numero': '11', 'nombre': 'Auditorio Municipal', 'tipo': 'Auditorio', 'lat': 21.77024989, 'lng': -98.45285924, 'direccion': 'Col. Benito Juárez, El Higo', 'mapsUrl': 'https://maps.app.goo.gl/P38fVEruvHGu5CVo9'}];
 
         let map;
         let markersLayer;
@@ -1058,7 +1090,6 @@
                 });
 
                 marker.on('click', function() {
-                    // SIN ANIMACIÓN EXTRA - solo zoom del mapa
                     flyToRefugio(refugio);
                 });
 
@@ -1071,10 +1102,24 @@
         }
 
         function flyToRefugio(refugio) {
-            // Solo zoom del mapa - SIN animaciones extra
             map.flyTo([refugio.lat, refugio.lng], 18, {
                 animate: true,
                 duration: 1.5
+            });
+        }
+
+        function centerToRefugios() {
+            if (filteredRefugios.length === 0) return;
+
+            const bounds = L.latLngBounds(
+                filteredRefugios.map(r => [r.lat, r.lng])
+            );
+
+            map.fitBounds(bounds, {
+                padding: [120, 120],
+                animate: true,
+                duration: 1.6,
+                easeLinearity: 0.28
             });
         }
 
@@ -1263,7 +1308,6 @@
         }
 
         function flyToRefugioFromList(refugio) {
-            // Solo zoom del mapa - SIN animaciones extra
             flyToRefugio(refugio);
 
             // Destacar el elemento de la lista
@@ -1295,22 +1339,18 @@
             if (menu) menu.classList.remove('active');
         }
 
-        function centerToRefugios() {
-            if (filteredRefugios.length === 0) return;
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
 
-            const bounds = L.latLngBounds(
-                filteredRefugios.map(r => [r.lat, r.lng])
-            );
-
-            // Vista más amplia con padding aumentado
-            map.fitBounds(bounds, {
-                padding: [120, 120], // ← Más espacio alrededor
-                animate: true,
-                duration: 1.6,
-                easeLinearity: 0.28
+            filteredRefugios = refugiosData.filter(refugio => {
+                return refugio.nombre.toLowerCase().includes(searchTerm);
             });
-        }
 
+            loadRefugios();
+            updateNearestShelter();
+        });
+
+        // Event listeners para botones
         document.addEventListener('DOMContentLoaded', function() {
             const centerBtn = document.getElementById('centerBtn');
             const layerBtn = document.getElementById('layerBtn');
@@ -1358,7 +1398,6 @@
                 });
             }
 
-            // Menú hamburguesa
             if (hamburgerBtn) {
                 hamburgerBtn.addEventListener('click', function() {
                     if (refugiosMenu) {
@@ -1384,11 +1423,8 @@
                     }
                 });
             }
-
-            initMap();
         });
 
-        // Inicializar al cargar
         document.addEventListener('DOMContentLoaded', function() {
             anime({
                 targets: '.sidebar-left',
@@ -1400,11 +1436,10 @@
 
             anime({
                 targets: '.controls-container',
-                translateY: [-50, 0],
                 opacity: [0, 1],
                 duration: 800,
-                easing: 'easeOutQuad',
-                delay: 200
+                delay: 200,
+                easing: 'easeOutQuad'
             });
 
             anime({
