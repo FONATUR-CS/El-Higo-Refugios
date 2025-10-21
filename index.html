@@ -1019,22 +1019,42 @@
         };
 
         function initMap() {
+            // Crear el mapa sin centro inicial definido
             map = L.map('map', {
-                center: [21.7715, -98.4515],
-                zoom: 15,
                 zoomControl: false,
                 layers: [layers.satellite]
             });
-
+        
             L.control.zoom({
                 position: 'bottomright'
             }).addTo(map);
-
+        
             markersLayer = L.layerGroup();
             map.addLayer(markersLayer);
-
+        
             loadRefugios();
             getUserLocation();
+            
+            // Ajustar vista inicial a todos los refugios después de cargarlos
+            setTimeout(() => {
+                fitAllRefugios();
+            }, 100);
+        }
+        
+        // Agregar esta nueva función después de initMap()
+        function fitAllRefugios() {
+            if (refugiosData.length === 0) return;
+            
+            const bounds = L.latLngBounds(
+                refugiosData.map(r => [r.lat, r.lng])
+            );
+            
+            // Ajustar el mapa para mostrar todos los refugios con padding
+            map.fitBounds(bounds, {
+                padding: [100, 100], // Espacio alrededor de los puntos
+                maxZoom: 15,         // Zoom máximo para evitar acercamiento excesivo
+                animate: false       // Sin animación en carga inicial
+            });
         }
 
         function createCustomMarker(refugio) {
