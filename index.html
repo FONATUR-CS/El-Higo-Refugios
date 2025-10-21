@@ -281,23 +281,23 @@
             font-size: 1.5rem;
         }
 
-        /* Panel más cercano compacto - DESKTOP */
-        .nearest-panel {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: white;
-            width: 120px;            /* ← CAMBIO: ANCHO FIJO IGUAL A BOTONES */
-            min-width: 120px;
-            max-width: 120px;        /* ← CAMBIO: SIN EXPANSIÓN EXTRA */
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-            cursor: default;
-            margin-top: 0.75rem;
-            padding: 0.75rem 1rem;   /* ← CAMBIO: PADDING IGUAL A BOTONES */
-            text-align: center;      /* ← CAMBIO: CENTRA TODO EL CONTENIDO */
-            overflow: hidden;        /* ← NUEVO: Evita desbordamiento */
-        }
+/* Panel más cercano compacto - DESKTOP */
+.nearest-panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: white;
+    width: 100%;             /* ← NUEVO: Ocupa todo el ancho disponible */
+    min-width: 120px;        /* ← Mantiene el ancho mínimo */
+    max-width: none;         /* ← NUEVO: Sin límite máximo */
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    cursor: default;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    overflow: hidden;
+}
 
         .nearest-panel:hover {
             background: var(--primary-color);
@@ -771,10 +771,10 @@
             }
 
             .nearest-panel {
-                width: 90px;         /* ← IGUAL QUE BOTONES EN MÓVIL */
+                width: 100%;         /* ← NUEVO: Igual ancho que botones */
                 min-width: 90px;
-                max-width: 90px;
-                padding: 0.4rem 0.5rem; /* ← MÁS COMPACTO */
+                max-width: none;     /* ← NUEVO: Sin límite máximo */
+                padding: 0.4rem 0.5rem;
                 margin-top: 0.5rem;
                 text-align: center;
             }
